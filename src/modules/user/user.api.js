@@ -4,7 +4,7 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
-router.get('/', authMiddleware.authenticateToken, userController.getAllUser)
+router.get('/', userController.getAllUser)
 
 router.get('/:id', authMiddleware.authenticateToken, userController.getUser)
 

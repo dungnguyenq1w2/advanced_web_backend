@@ -3,7 +3,7 @@ const yup = require('yup')
 const registerBodyValidation = async (body) => {
     const schema = yup.object().shape({
         name: yup.string().required('Hãy nhập Họ tên'),
-        email: yup.string().required('Hãy nhập Tên đăng nhập'),
+        email: yup.string().email('Email không hợp lệ').required('Hãy nhập Email'),
         password: yup.string().required('Hãy nhập Mật khẩu').min(6, 'Mật khẩu phải hơn 6 kí tự'),
         confirmPassword: yup
             .string()
@@ -15,7 +15,7 @@ const registerBodyValidation = async (body) => {
 
 const loginBodyValidation = async (body) => {
     const schema = yup.object().shape({
-        email: yup.string().required('Hãy nhập Tên đăng nhập'),
+        email: yup.string().email('Email không hợp lệ').required('Hãy nhập Email'),
         password: yup.string().required('Hãy nhập Mật khẩu').min(6, 'Mật khẩu phải hơn 6 kí tự'),
     })
     return schema.validate(body).catch((error) => error)

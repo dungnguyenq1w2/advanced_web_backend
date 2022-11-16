@@ -64,7 +64,8 @@ const login = async (req, res) => {
         res.status(200).json({
             accessToken,
             refreshToken,
-            user: loggedUser.name,
+            name: loggedUser.name,
+            email: loggedUser.email,
         })
     } catch (err) {
         console.log(err)
