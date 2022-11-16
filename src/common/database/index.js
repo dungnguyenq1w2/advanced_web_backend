@@ -32,11 +32,11 @@ db.sequelize = sequelize
 
 const User = require('#modules/user/user.model.js')
 const Group = require('#modules/group/group.model.js')
-// const Account = require('#modules/auth/models/account.model.js')
+const User_Group = require('#modules/user_group/user_group.model.js')
 
 db.User = User(sequelize, DataTypes)
 db.Group = Group(sequelize, DataTypes)
-// db.Account = Account(sequelize, DataTypes)
+db.User_Group = User_Group(sequelize, DataTypes)
 
 // Setup association
 Object.keys(db).forEach(function (modelName) {

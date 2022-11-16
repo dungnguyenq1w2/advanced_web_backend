@@ -9,6 +9,8 @@ router.post('/login', authController.login)
 
 router.post('/refresh-token', authController.getNewToken)
 
+router.post('/verify', authController.verify)
+
 router.post('/logout', authController.logout)
 
 module.exports = router
