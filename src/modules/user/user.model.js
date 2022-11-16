@@ -26,6 +26,10 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            is_auth: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
             refresh_token: {
                 type: DataTypes.STRING,
                 allowNull: true,
@@ -36,12 +40,12 @@ module.exports = (Sequelize, DataTypes) => {
             tableName: 'user',
         }
     )
-    // User.associate = (models) => {
-    // Associate User(1) - User_Group(1)
-    // User.hasMany(models.User_Group, {
-    //     foreignKey: 'user_id',
-    //     as: 'users',
-    // })
-    // }
+    User.associate = (models) => {
+        // Associate User(1) - User_Group(1)
+        User.hasMany(models.User_Group, {
+            foreignKey: 'user_id',
+            as: 'users',
+        })
+    }
     return User
 }
