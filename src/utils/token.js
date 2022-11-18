@@ -7,7 +7,11 @@ const User = db.User
 // Generate only access token
 const generateAccessToken = async (user) => {
     try {
-        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+        console.log('yoo')
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+            expiresIn: '10m',
+        })
+        // console.log('🚀 ~ accessToken', accessToken)
 
         return Promise.resolve(accessToken)
     } catch (err) {
@@ -18,6 +22,7 @@ const generateAccessToken = async (user) => {
 // Generate both access token and refresh token
 const generateTokens = async (user) => {
     try {
+        // const stringId = user.id.toString()
         const accessToken = await generateAccessToken(user)
         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
             expiresIn: '30d',
