@@ -33,11 +33,22 @@ db.sequelize = sequelize
 const User = require('#modules/user/user.model.js')
 const Group = require('#modules/group/group.model.js')
 const User_Group = require('#modules/user_group/user_group.model.js')
+const Role = require('#modules/role/role.model.js')
 
 db.User = User(sequelize, DataTypes)
 db.Group = Group(sequelize, DataTypes)
 db.User_Group = User_Group(sequelize, DataTypes)
+db.Role = Role(sequelize, DataTypes)
 
+db.sequelize
+    //.sync({ force: false, match: /_test$/ }) // important, chạy chỉ khi  tên DB kết thúc bằng test
+    .sync({ alter: true })
+    .then(() => {
+        console.log('yes re-sync done!')
+    })
+    .catch((err) => {
+        console.log('Error: ' + err)
+    })
 // Setup association
 Object.keys(db).forEach(function (modelName) {
     if ('associate' in db[modelName]) {

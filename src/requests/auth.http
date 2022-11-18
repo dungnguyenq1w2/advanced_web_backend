@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "name": "Nguyễn Tấn Dũng",
+    "email": "hoduy220@gmail.com",
+    "password": "123456" ,
+    "confirmPassword": "123456" 
+}
+
+###
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "dungnguyenq1w2@gmail.com",
+    "password": "123123" 
+}
+
+###
+# @name getNewToken
+POST {{baseUrl}}/auth/refresh-token
+Content-Type: application/json
+
+{
+   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6Ik5ndXnhu4VuIFThuqVuIETFqW5nIiwiaWF0IjoxNjY1ODE0ODI3LCJleHAiOjE2Njg0MDY4Mjd9.RRqi3dM5dff6Pofa13nucg3KKpxKCvKqr-GAeGuxVwo"
+}
+
+###
+# @name logout
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6Ik5ndXnhu4VuIFThuqVuIETFqW5nIiwiaWF0IjoxNjY3MjMwOTgzLCJleHAiOjE2NjcyMzA5ODh9.JscG57JevEBOpFkKn7MqepsuTTakMMWQZY2tBo91vfM"
+}
+

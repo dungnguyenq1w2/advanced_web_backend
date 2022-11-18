@@ -22,10 +22,6 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            email_token: {
-                type: DataTypes.STRING,
-                allowNull: true,
-            },
             is_auth: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
