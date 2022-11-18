@@ -37,7 +37,7 @@ module.exports = (Sequelize, DataTypes) => {
         }
     )
     User.associate = (models) => {
-        // Associate User(1) - User_Group(1)
+        // Associate User(1) - User_Group(*)
         User.hasMany(models.User_Group, {
             foreignKey: 'user_id',
             as: 'users',
