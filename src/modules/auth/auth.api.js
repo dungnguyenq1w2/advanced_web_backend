@@ -13,4 +13,6 @@ router.post('/verify', authController.verify)
 
 router.post('/logout', authController.logout)
 
+router.post('/google-login', authController.googleLogin)
+
 module.exports = router

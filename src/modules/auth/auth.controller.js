@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 
 const db = require('#common/database/index.js')
 const mailer = require('#root/utils/mailer.js')
-const {htmlContent} = require('../../common/config/mailConfig')
+const { htmlContent } = require('../../common/config/mailConfig')
 const { generateAccessToken, generateTokens, verifyRefreshToken } = require('#root/utils/token.js')
 const {
     loginBodyValidation,
@@ -10,6 +10,12 @@ const {
     registerBodyValidation,
 } = require('#root/utils/validation.js')
 
+const { OAuth2Client } = require('google-auth-library')
+
+const googleClient = new OAuth2Client({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+})
 // create main Model
 const User = db.User
 
@@ -29,20 +35,19 @@ const register = async (req, res) => {
         const hashPassword = await bcrypt.hash(userRegister.password, salt)
 
         const addUser = await User.create({ ...userRegister, password: hashPassword })
-        if(addUser){
+        if (addUser) {
             const resultUser = { id: addUser.id, name: addUser.name, email: addUser.email }
-            bcrypt.hash(addUser.email , parseInt(process.env.SALT)).then((hashedEmail) => {
-                    console.log(`${process.env.APP_URL}/verify?email=${user.email}&token=${hashedEmail}`);
-                    mailer.sendMail(user.email, "Verify Email", htmlContent(addUser.email, hashedEmail))
-                });
+            bcrypt.hash(addUser.email, parseInt(process.env.SALT)).then((hashedEmail) => {
+                console.log(
+                    `${process.env.APP_URL}/verify?email=${user.email}&token=${hashedEmail}`
+                )
+                mailer.sendMail(user.email, 'Verify Email', htmlContent(addUser.email, hashedEmail))
+            })
             res.status(201).json({
                 data: resultUser,
                 message: 'Đăng ký thành công',
             })
-        }
-        else
-            res.status(500).json({ message: 'Internal Server Error' })
-        
+        } else res.status(500).json({ message: 'Internal Server Error' })
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: 'Internal Server Error' })
@@ -67,9 +72,8 @@ const login = async (req, res) => {
 
         delete user.password
         const { accessToken, refreshToken } = await generateTokens(loggedUser)
-        
-        if(!user.is_auth)
-            res.status(401).json({ message: 'Chưa xác thực tài khoản'})
+
+        if (!user.is_auth) res.status(401).json({ message: 'Chưa xác thực tài khoản' })
 
         res.status(200).json({
             accessToken,
@@ -103,9 +107,7 @@ const getNewToken = async (req, res) => {
         .catch((err) => res.status(400).json(err)) // Refresh token was expired
 }
 
-const verify = async (req, res) = {
-
-}
+const verify = async (req, res) => {}
 
 const logout = async (req, res) => {
     const token = req.body
@@ -128,4 +130,35 @@ const logout = async (req, res) => {
     }
 }
 
-module.exports = { register, login, getNewToken, verify, logout }
+const googleLogin = async (req, res) => {
+    const { token } = req.body
+
+    const ticket = await googleClient.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    })
+
+    const payload = ticket.getPayload()
+
+    let user = await User.findOne({ email: payload?.email })
+    if (!user) {
+        //     user = await new User({
+        //         name: payload?.name,
+        //         image: payload?.picture,
+        //         email: payload?.email,
+        //     })
+        // await user.save()
+        user = await User.create({
+            name: payload?.name,
+            image: payload?.picture,
+            email: payload?.email,
+        })
+    }
+
+    res.status(200).json({
+        user: { name: user.name, email: user.email, image: user.image },
+        token,
+    })
+}
+
+module.exports = { register, login, getNewToken, verify, logout, googleLogin }
