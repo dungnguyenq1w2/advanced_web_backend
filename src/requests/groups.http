@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name getGroup
+GET {{baseUrl}}/groups/11
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwibmFtZSI6IkTFqW5nIE5ndXnhu4VuIiwiaW1hZ2UiOm51bGwsImVtYWlsIjoiZHVuZ25ndXllbnExdzJAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjY4NzgyMDUwLCJleHAiOjE2Njg3ODI2NTB9.BNEwaVI9E61HyVSao5THOXUAE1HuLSxT9oVQqIJcYds

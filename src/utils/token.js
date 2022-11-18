@@ -6,15 +6,15 @@ const User = db.User
 
 // Generate only access token
 const generateAccessToken = async (user) => {
+    delete user.exp
     try {
-        console.log('yoo')
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: '10m',
         })
-        // console.log('🚀 ~ accessToken', accessToken)
 
         return Promise.resolve(accessToken)
     } catch (err) {
+        console.log('🚀 ~ err', err)
         return Promise.reject(err)
     }
 }
