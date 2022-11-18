@@ -2,7 +2,7 @@ const db = require('#common/database/index.js')
 
 // Create main Model
 const Group = db.Group
-const User = db.User
+const User_Group = db.User_Group
 
 // Main work
 
@@ -22,27 +22,35 @@ const getGroup = async (req, res) => {
     if (id != '0') {
         const group = await Group.findByPk(id, {
             include: {
-                model: Account,
-                as: 'account',
+                model: User_Group,
+                as: 'participants',
             },
         })
-
+        const meInGroup = group.dataValues.participants.find(
+            (participant) => participant.user_id === req.user.id
+        )
+        group.dataValues['role'] = meInGroup.dataValues.role_id
         res.status(200).send({
-            data: {
-                id: group.dataValues.id,
-                name: group.dataValues.name,
-                groupname: group.dataValues.account.dataValues.groupname,
-            },
+            data: group,
         })
     }
 }
 
 const addGroup = async (req, res) => {
     const addGroup = req.body
-
-    const group = await Group.create(addGroup)
-
-    res.status(201).send({ data: group })
+    try {
+        const group = await Group.create(addGroup)
+        const addUserGroup = {
+            user_id: req.user.id,
+            role_id: 1,
+            group_id: group.dataValues.id,
+        }
+        await User_Group.create(addUserGroup)
+        return res.status(201).send({ data: group })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 const updateGroup = async (req, res) => {

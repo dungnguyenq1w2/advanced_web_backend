@@ -6,18 +6,22 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            description: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
         },
         {
             timestamps: false,
             tableName: 'group',
         }
     )
-    // Group.associate = (models) => {
-    //     // Associate Group(1) - Account(1)
-    //     Group.hasOne(models.Account, {
-    //         foreignKey: 'user_id',
-    //         as: 'account',
-    //     })
-    // }
+    Group.associate = (models) => {
+        // Associate Group(1) - User_Group(*)
+        Group.hasMany(models.User_Group, {
+            foreignKey: 'group_id',
+            as: 'participants',
+        })
+    }
     return Group
 }

@@ -12,12 +12,12 @@ module.exports = (Sequelize, DataTypes) => {
             tableName: 'role',
         }
     )
-    // Role.associate = (models) => {
-    //     // Associate Role(1) - Account(1)
-    //     Role.hasOne(models.Account, {
-    //         foreignKey: 'user_id',
-    //         as: 'account',
-    //     })
-    // }
+    Role.associate = (models) => {
+        // Associate Role(1) - User_Group(*)
+        Role.hasOne(models.User_Group, {
+            foreignKey: 'role_id',
+            as: 'roles',
+        })
+    }
     return Role
 }
