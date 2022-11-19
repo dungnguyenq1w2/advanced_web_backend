@@ -10,6 +10,19 @@ module.exports = (Sequelize, DataTypes) => {
         {
             timestamps: false,
             tableName: 'role',
+        },
+        {
+            freezeTableName: true,
+        }
+    )
+    Role.bulkCreate(
+        [
+            { name: 'Owner', id: 1 },
+            { name: 'Co-owner', id: 2 },
+            { name: 'Member', id: 3 },
+        ],
+        {
+            ignoreDuplicates: true,
         }
     )
     Role.associate = (models) => {

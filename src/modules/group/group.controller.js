@@ -3,7 +3,7 @@ const db = require('#common/database/index.js')
 // Create main Model
 const Group = db.Group
 const User_Group = db.User_Group
-
+const User = db.User
 // Main work
 
 const getAllGroup = async (req, res) => {
@@ -13,21 +13,39 @@ const getAllGroup = async (req, res) => {
 }
 
 const getGroup = async (req, res) => {
-    const id = req.params.id
-    if (id != '0') {
+    try {
+        const id = req.params.id
+        const isGroup = await Group.findOne({
+            where: { id: id },
+        })
+        if (!isGroup) return res.status(404).json({ status: 404, message: "Group doesn't existed" })
         const group = await Group.findByPk(id, {
             include: {
                 model: User_Group,
                 as: 'participants',
+                required: true,
+                right: true,
+                attributes: ['id', 'role_id'],
+                include: {
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'image'],
+                    raw: true,
+                },
+                raw: true,
             },
         })
+
         const meInGroup = group.dataValues.participants.find(
-            (participant) => participant.user_id === req.user.id
+            (participant) => participant.user.id === req.user.id
         )
         group.dataValues['role'] = meInGroup.dataValues.role_id
-        res.status(200).send({
+        return res.status(200).send({
             data: group,
         })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
