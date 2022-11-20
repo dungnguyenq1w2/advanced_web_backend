@@ -18,7 +18,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "dungnguyenq1w2@gmail.com",
+    "email": "lengocdu123654tl@gmail.com",
     "password": "123456" 
 }
 
@@ -28,7 +28,7 @@ POST {{baseUrl}}/auth/refresh-token
 Content-Type: application/json
 
 {
-   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwibmFtZSI6IkTFqW5nIE5ndXnhu4VuIiwiaW1hZ2UiOm51bGwsImVtYWlsIjoiZHVuZ25ndXllbnExdzJAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjY4NzgyNjIyLCJleHAiOjE2NzEzNzQ2MjJ9.E6Q4z7t0q_my50BUSYSThCIdYNgkiVTgiTeibvSZYRc"
+   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6bnVsbCwiZW1haWwiOiJsZW5nb2NkdTEyMzY1NHRsQGdtYWlsLmNvbSIsImlzX2F1dGgiOjEsImlhdCI6MTY2ODkxMzc3MiwiZXhwIjoxNjcxNTA1NzcyfQ.O6VSaldq9P2eYKR74ow0U1QM2ZCNFhrjrXHAqOrXPGQ"
 }
 
 ###
