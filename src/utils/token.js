@@ -22,12 +22,16 @@ const generateAccessToken = async (user) => {
 
 // Generate both access token and refresh token
 const generateTokens = async (user) => {
+    console.log('🚀 ~ user', user)
     try {
         // const stringId = user.id.toString()
         const accessToken = await generateAccessToken(user)
+        console.log('🚀 ~ accessToken', accessToken)
+        console.log('🚀 ~ user', user)
         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
             expiresIn: '30d',
         })
+        console.log('🚀 ~ refreshToken', refreshToken)
 
         await User.update({ refresh_token: refreshToken }, { where: { id: user.id } })
 

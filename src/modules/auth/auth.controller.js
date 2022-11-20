@@ -37,13 +37,19 @@ const register = async (req, res) => {
         const addUser = await User.create({ ...userRegister, password: hashPassword })
         if (addUser) {
             const resultUser = { id: addUser.id, name: addUser.name, email: addUser.email }
-            bcrypt.hash(addUser.email, parseInt(process.env.SALT)).then(async (hashedEmail) => {
-                await mailer.sendMail(
-                    addUser.email,
-                    'Verify Email',
-                    htmlContent(addUser.email, hashedEmail)
-                )
-            })
+            await bcrypt
+                .hash(addUser.email + process.env.REFRESH_TOKEN_SECRET, parseInt(process.env.SALT))
+                .then(async (error, hashedEmail) => {
+                    if (error) {
+                        console.log(error)
+                        return res.status(500).json({ message: 'Bcrypt failed' })
+                    }
+                    await mailer.sendMail(
+                        addUser.email,
+                        'Verify Email',
+                        htmlContent(addUser.email, hashedEmail)
+                    )
+                })
             return res.status(201).json({
                 data: resultUser,
                 message: 'Đăng ký thành công',
@@ -72,7 +78,8 @@ const login = async (req, res) => {
         if (!verifiedPassword) return res.status(400).json({ message: 'Sai mật khẩu' })
 
         delete user.password
-        const { accessToken, refreshToken } = await generateTokens(user)
+        const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
+        // console.log('🚀 ~ refreshToken', refreshToken)
 
         if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
 
@@ -80,10 +87,12 @@ const login = async (req, res) => {
             accessToken,
             refreshToken,
             id: user.id,
+            image: user.image,
             name: user.name,
             email: user.email,
         })
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
@@ -110,48 +119,54 @@ const getNewToken = async (req, res) => {
 const verify = async (req, res) => {
     try {
         const { email, token } = req.body
-        bcrypt.compare(email, token, async (err, result) => {
-            if (result) {
-                const user = await User.findOne({
-                    where: { email: email },
-                    attributes: {
-                        exclude: ['refresh_token', 'phone', 'password'],
-                    },
-                    raw: true,
-                })
-                if (user) {
-                    if (user.is_auth == 1)
-                        return res.status(404).json({ status: 404, message: 'verified account' })
+        await bcrypt.compare(
+            email + process.env.REFRESH_TOKEN_SECRET,
+            token,
+            async (err, result) => {
+                if (result) {
+                    const user = await User.findOne({
+                        where: { email: email },
+                        attributes: {
+                            exclude: ['refresh_token', 'phone', 'password'],
+                        },
+                        raw: true,
+                    })
+                    if (user) {
+                        if (user.is_auth == 1)
+                            return res
+                                .status(404)
+                                .json({ status: 404, message: 'verified account' })
 
-                    const resultAuth = await User.update(
-                        { is_auth: true },
-                        {
-                            where: {
-                                email: email,
-                            },
-                        }
-                    )
-                    if (resultAuth) {
-                        const { accessToken, refreshToken } = await generateTokens(user)
-                        res.status(200).json({
-                            accessToken,
-                            refreshToken,
-                            id: user.id,
-                            name: user.name,
-                            email: user.email,
-                        })
-                    } else
-                        return res
-                            .status(500)
-                            .json({ status: 500, message: 'Internal Server Error' })
+                        const resultAuth = await User.update(
+                            { is_auth: true },
+                            {
+                                where: {
+                                    email: email,
+                                },
+                            }
+                        )
+                        if (resultAuth) {
+                            const { accessToken, refreshToken } = await generateTokens(user)
+                            res.status(200).json({
+                                accessToken,
+                                refreshToken,
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                            })
+                        } else
+                            return res
+                                .status(500)
+                                .json({ status: 500, message: 'Internal Server Error' })
+                    } else {
+                        return res.status(404).json({ status: 404, message: 'Invalid email' })
+                    }
                 } else {
-                    return res.status(404).json({ status: 404, message: 'Invalid email' })
+                    console.log(err)
+                    return res.status(404).json({ status: 404, message: 'Error token' })
                 }
-            } else {
-                console.log(err)
-                return res.status(404).json({ status: 404, message: 'Error token' })
             }
-        })
+        )
     } catch (err) {
         console.log(err)
         return res.status(500).json({ message: 'Internal Server Error' })

@@ -12,7 +12,8 @@ module.exports = (Sequelize, DataTypes) => {
             },
             image: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                defaultValue:
+                    'https://res.cloudinary.com/dykg8qjzp/image/upload/v1668829117/avatar-login_gcpy3w.png',
             },
             email: {
                 type: DataTypes.STRING,
