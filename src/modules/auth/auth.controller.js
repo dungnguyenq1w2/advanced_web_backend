@@ -84,7 +84,7 @@ const login = async (req, res) => {
             email: user.email,
         })
     } catch (err) {
-        returnres.status(500).json({ message: 'Internal Server Error' })
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
@@ -188,25 +188,45 @@ const googleLogin = async (req, res) => {
     })
 
     const payload = ticket.getPayload()
+    console.log('payload: ', payload)
 
-    let user = await User.findOne({ email: payload?.email })
+    // let user = await User.findOne({ email: payload?.email })
+    const user = await User.findOne({
+        where: { email: payload?.email },
+        attributes: { exclude: ['refresh_token', 'phone'] },
+        raw: true,
+    })
+
+    let test = 'account create now'
     if (!user) {
-        //     user = await new User({
-        //         name: payload?.name,
-        //         image: payload?.picture,
-        //         email: payload?.email,
-        //     })
-        // await user.save()
         user = await User.create({
             name: payload?.name,
             image: payload?.picture,
             email: payload?.email,
+            // is_auth: 0,
         })
+        user = user.get({ plain: true })
+    } else {
+        test = 'account create before'
     }
 
+    // delete user.password
+    const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
+    console.log('****refesh_tokennnnnn: ', refreshToken.length)
+    // const { accessToken, refreshToken } = await generateTokens(JSON.stringify(user))
+    // const { accessToken, refreshToken } = await generateTokens(user.toJSON())
+
+    // if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
+
     res.status(200).json({
-        user: { name: user.name, email: user.email, image: user.image },
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        accessToken,
+        refreshToken,
         token,
+        test,
     })
 }
 

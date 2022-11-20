@@ -20,14 +20,15 @@ module.exports = (Sequelize, DataTypes) => {
             },
             password: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             is_auth: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
             refresh_token: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
+                // type: DataTypes.STRING,
                 allowNull: true,
             },
         },

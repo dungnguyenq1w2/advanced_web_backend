@@ -19,5 +19,17 @@ module.exports = (Sequelize, DataTypes) => {
             as: 'roles',
         })
     }
+
+    Role.bulkCreate(
+        [
+            { name: 'Owner', id: 1 },
+            { name: 'Co-owner', id: 2 },
+            { name: 'Member', id: 3 },
+        ],
+        {
+            ignoreDuplicates: true,
+        }
+    )
+
     return Role
 }
