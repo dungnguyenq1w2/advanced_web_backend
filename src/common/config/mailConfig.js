@@ -10,6 +10,10 @@ const htmlContent = (user, hashedEmail) => {
     return `<a href="${process.env.APP_FRONT_END_URL}/verify?email=${user}&token=${hashedEmail}`
 }
 
+const htmlContentInviteGroup = (initeLink) => {
+    return `<a href="${process.env.APP_FRONT_END_URL}/verify?email=${user}&token=${hashedEmail}`
+}
+
 module.exports = {
     MAILER,
     HOST,
@@ -19,5 +23,6 @@ module.exports = {
     ENCRYPTION,
     FROM_ADDRESS,
     FROM_NAME,
-    htmlContent
+    htmlContent,
+    htmlContentInviteGroup,
 }

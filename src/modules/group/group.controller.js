@@ -1,5 +1,9 @@
 const db = require('#common/database/index.js')
 
+const mailer = require('#root/utils/mailer.js')
+const { htmlContent } = require('#common/config/mailConfig.js')
+const { htmlContentInviteGroup } = require('../../common/config/mailConfig')
+
 // Create main Model
 const Group = db.Group
 const User_Group = db.User_Group
@@ -147,6 +151,27 @@ const joinGroupByLink = async (req, res) => {
     }
 }
 
+const joinGroupByEmail = async (req, res) => {
+    const emails = req.body.emails
+    const groupId = req.params.id
+
+    try {
+        const group = await Group.findByPk(groupId)
+        for (const email of emails) {
+            await mailer.sendMail(
+                email,
+                `Invite Group [${group.dataValues.name}]`,
+                htmlContentInviteGroup()
+            )
+        }
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+
 const promoteParticipant = async (req, res) => {
     const userId = req.body.userId
     const groupId = req.params.id
@@ -264,6 +289,7 @@ module.exports = {
     updateGroup,
     deleteGroup,
     joinGroupByLink,
+    joinGroupByEmail,
     demoteParticipant,
     promoteParticipant,
     kickOutParticipant,
