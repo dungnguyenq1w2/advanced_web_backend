@@ -20,6 +20,6 @@ router.put('/:id/promote', authMiddleware.authenticateToken, groupController.pro
 
 router.put('/:id/demote', authMiddleware.authenticateToken, groupController.demoteParticipant)
 
-router.put('/:id/kick-out', authMiddleware.authenticateToken, groupController.kickOutParticipant)
+router.delete('/:id/kick-out', authMiddleware.authenticateToken, groupController.kickOutParticipant)
 
 module.exports = router
