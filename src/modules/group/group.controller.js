@@ -9,45 +9,32 @@ const Role = db.Role
 // Main work
 
 const getAllGroup = async (req, res) => {
-    console.log('tests:', req.user.id)
-    const groups = await Group.findAll({
-        include: {
-            model: User_Group,
-            as: 'participants',
-            // where: { user_id: req.user.id },
-            where: { user_id: req.user.id },
-
-            // include: ['role'],
-            // include: {
-            //     model: Role,
-            //     as: 'role',
-            // },
-        },
-    })
-    for (const group of groups) {
-        // const meInGroup = group.dataValues.participants.find(
-        //     (participant) => participant.user_id === req.user.id
-        // )
-        // if (meInGroup) {
-        //     group.dataValues['my_role'] = meInGroup.dataValues.role_id
-        //     group.dataValues['group_size'] = group.dataValues.participants.length
-        // }
-
-        const size = await User_Group.count({
-            where: { group_id: group.dataValues.id },
+    try {
+        const groups = await Group.findAll({
+            include: {
+                model: User_Group,
+                as: 'participants',
+                where: { user_id: req.user.id },
+            },
         })
+        for (const group of groups) {
+            const size = await User_Group.count({
+                where: { group_id: group.dataValues.id },
+            })
 
-        group.dataValues['my_role'] = group.dataValues.participants[0].role_id
-        group.dataValues['group_size'] = size
-        // console.log(group)
+            group.dataValues['my_role'] = group.dataValues.participants[0].role_id
+            group.dataValues['group_size'] = size
+        }
+        return res.status(200).send({ data: groups })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
-
-    res.status(200).send({ data: groups })
 }
 
 const getGroup = async (req, res) => {
     try {
-        const id = req.params.id
+        const id = parseInt(req.params.id)
         const isGroup = await Group.findOne({
             where: { id: id },
         })
@@ -83,8 +70,8 @@ const getGroup = async (req, res) => {
 }
 
 const addGroup = async (req, res) => {
-    const addGroup = req.body
     try {
+        const addGroup = req.body
         const group = await Group.create(addGroup)
         const addUserGroup = {
             user_id: req.user.id,
@@ -100,44 +87,54 @@ const addGroup = async (req, res) => {
 }
 
 const updateGroup = async (req, res) => {
-    const id = req.params.id
-    const updatedGroup = req.body
+    try {
+        const id = parseInt(req.params.id)
+        const updatedGroup = req.body
 
-    const group = await Group.update(updatedGroup, { where: { id: id } })
+        const group = await Group.update(updatedGroup, { where: { id: id } })
 
-    res.status(200).send({ data: group })
+        res.status(200).send({ data: group })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 const deleteGroup = async (req, res) => {
-    const id = req.params.id
+    try {
+        const id = req.params.id
 
-    await Group.destroy({ where: { id: id } })
+        await Group.destroy({ where: { id: id } })
 
-    res.status(200).send({ message: `Group is deleted` })
+        res.status(200).send({ message: `Group is deleted` })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 const joinGroupByLink = async (req, res) => {
-    const userId = req.user.id
-    const groupId = req.params.id
-
     try {
-        const [userGroup, created] = await User_Group.findOrCreate({
+        const userId = parseInt(req.user.id)
+        const groupId = parseInt(req.params.id)
+
+        let userGroup = await User_Group.findOne({
             where: {
                 user_id: userId,
                 group_id: groupId,
             },
-            default: {
+        })
+
+        if (!userGroup) {
+            userGroup = await User_Group.create({
                 user_id: userId,
                 group_id: groupId,
                 role_id: 3,
-            },
-        })
+            })
+        }
 
-        // is_created:
-        //      + true: user NOT JOINED group before --> Now user JOINED
-        //      + false: user JOINED group before
         return res.status(200).json({
-            is_created: created,
+            user: userGroup,
         })
     } catch (error) {
         console.log('Error:', error)
@@ -148,10 +145,9 @@ const joinGroupByLink = async (req, res) => {
 }
 
 const promoteParticipant = async (req, res) => {
-    const userId = req.body.userId
-    const groupId = req.params.id
-
     try {
+        const userId = parseInt(req.body.userId)
+        const groupId = parseInt(req.params.id)
         const userGroup = await User_Group.findOne({
             where: {
                 user_id: userId,
@@ -164,13 +160,11 @@ const promoteParticipant = async (req, res) => {
                 {
                     ...userGroup,
                     role_id: userGroup.dataValues.role_id - 1,
-                    // role_id: Math.min(2, userGroup.dataValues.role_id - 1),
                 },
                 {
                     where: { id: userGroup.dataValues.id },
                 }
             )
-            // await userGroup.update({})
 
             return res.status(200).json({
                 message: 'Promoted successfully',
@@ -188,10 +182,9 @@ const promoteParticipant = async (req, res) => {
     }
 }
 const demoteParticipant = async (req, res) => {
-    const userId = req.body.userId
-    const groupId = req.params.id
-
     try {
+        const userId = parseInt(req.body.userId)
+        const groupId = parseInt(req.params.id)
         const userGroup = await User_Group.findOne({
             where: {
                 user_id: userId,
@@ -209,7 +202,6 @@ const demoteParticipant = async (req, res) => {
                     where: { id: userGroup.dataValues.id },
                 }
             )
-            // await userGroup.update({})
             return res.status(200).json({
                 message: 'Demoted successfully',
             })
@@ -234,17 +226,15 @@ const demoteParticipant = async (req, res) => {
 }
 
 const kickOutParticipant = async (req, res) => {
-    const userId = req.body.userId
-    const groupId = req.params.id
-
     try {
+        const userId = parseInt(req.body.userId)
+        const groupId = parseInt(req.params.id)
         await User_Group.destroy({
             where: {
                 user_id: userId,
                 group_id: groupId,
             },
         })
-        // await userGroup.update({})
 
         return res.status(200).json({
             message: 'Kicked out successfully',

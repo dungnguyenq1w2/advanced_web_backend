@@ -79,7 +79,6 @@ const login = async (req, res) => {
 
         delete user.password
         const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
-        // console.log('🚀 ~ refreshToken', refreshToken)
 
         if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
 
@@ -203,7 +202,6 @@ const googleLogin = async (req, res) => {
     })
 
     const payload = ticket.getPayload()
-    console.log('payload: ', payload)
 
     // let user = await User.findOne({ email: payload?.email })
     let user = await User.findOne({
@@ -228,11 +226,6 @@ const googleLogin = async (req, res) => {
 
     // delete user.password
     const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
-    console.log('****refesh_tokennnnnn: ', refreshToken.length)
-    // const { accessToken, refreshToken } = await generateTokens(JSON.stringify(user))
-    // const { accessToken, refreshToken } = await generateTokens(user.toJSON())
-
-    // if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
 
     res.status(200).json({
         id: user.id,
