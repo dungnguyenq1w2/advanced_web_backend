@@ -8,4 +8,40 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6I
 ###
 # @name getAllGroups
 GET {{baseUrl}}/groups
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IkRvIG5hbWUiLCJpbWFnZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FMbTV3dTJsaENwbW43V2Y4QTNmTkd1ZVNIZkpCNklMT1pQWkRtVHZsaS04PXM5Ni1jIiwiZW1haWwiOiJhY2NzZWNvbmRsbmRAZ21haWwuY29tIiwicGFzc3dvcmQiOm51bGwsImlzX2F1dGgiOjAsImlhdCI6MTY2ODkyNzY3OCwiZXhwIjoxNjcxNTE5Njc4fQ.685odmlVC6PD7RUmjXUxFzgDs7DTkeJV0y3C944YJD0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+
+###
+# @name promoteParticipant
+PUT {{baseUrl}}/groups/1/promote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+Content-Type: application/json
+
+{
+    "userId": 2
+}
+
+###
+# @name demoteParticipant
+PUT {{baseUrl}}/groups/1/demote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+Content-Type: application/json
+
+{
+    "userId": 2
+}
+
+###
+# @name demoteParticipant
+PUT {{baseUrl}}/groups/1/kick-out
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+Content-Type: application/json
+
+{
+    "userId": 2
+}
+
+###
+# @name inviteParticipant
+POST {{baseUrl}}/groups/2/invite
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODc1ODAsImV4cCI6MTY2OTA5MTE4MH0.fQTB7CU0QHG6-KzgW1SU_sgiEkiz7unk_oG-CWuQoyI
+

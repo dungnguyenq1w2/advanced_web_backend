@@ -206,7 +206,7 @@ const googleLogin = async (req, res) => {
     console.log('payload: ', payload)
 
     // let user = await User.findOne({ email: payload?.email })
-    const user = await User.findOne({
+    let user = await User.findOne({
         where: { email: payload?.email },
         attributes: { exclude: ['refresh_token', 'phone'] },
         raw: true,
@@ -218,6 +218,7 @@ const googleLogin = async (req, res) => {
             name: payload?.name,
             image: payload?.picture,
             email: payload?.email,
+            is_auth: 1,
             // is_auth: 0,
         })
         user = user.get({ plain: true })

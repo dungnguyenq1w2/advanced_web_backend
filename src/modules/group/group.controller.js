@@ -45,11 +45,6 @@ const getAllGroup = async (req, res) => {
     res.status(200).send({ data: groups })
 }
 
-// const getUserGroups = async (req, res) => {
-//     const userId = req.params.userId
-//     const userGroups = await Group.findAll({ include: [User] })
-// }
-
 const getGroup = async (req, res) => {
     try {
         const id = req.params.id
@@ -121,9 +116,126 @@ const deleteGroup = async (req, res) => {
     res.status(200).send({ message: `Group is deleted` })
 }
 
-const joinGroupByLink = async () => {
-    const groupId = req.params.groupId
-    const userId = req.params.userId
+const joinGroupByLink = async (req, res) => {}
+
+const promoteParticipant = async (req, res) => {
+    const userId = req.body.userId
+    const groupId = req.params.id
+
+    try {
+        const userGroup = await User_Group.findOne({
+            where: {
+                user_id: userId,
+                group_id: groupId,
+            },
+        })
+
+        if (userGroup.dataValues.role_id == 3) {
+            const promotedUserGroup = await User_Group.update(
+                {
+                    ...userGroup,
+                    role_id: userGroup.dataValues.role_id - 1,
+                    // role_id: Math.min(2, userGroup.dataValues.role_id - 1),
+                },
+                {
+                    where: { id: userGroup.dataValues.id },
+                }
+            )
+            // await userGroup.update({})
+
+            return res.status(200).json({
+                message: 'Promoted successfully',
+            })
+        } else {
+            return res.status(400).json({
+                message: 'Can not promote this participant',
+            })
+        }
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+const demoteParticipant = async (req, res) => {
+    const userId = req.body.userId
+    const groupId = req.params.id
+
+    try {
+        const userGroup = await User_Group.findOne({
+            where: {
+                user_id: userId,
+                group_id: groupId,
+            },
+        })
+
+        if (userGroup.dataValues.role_id == 2) {
+            const demotedUserGroup = await User_Group.update(
+                {
+                    ...userGroup,
+                    role_id: userGroup.dataValues.role_id + 1,
+                },
+                {
+                    where: { id: userGroup.dataValues.id },
+                }
+            )
+            // await userGroup.update({})
+            return res.status(200).json({
+                message: 'Demoted successfully',
+            })
+        } else if (userGroup.dataValues.role_id == 3) {
+            await User_Group.destroy({
+                where: { id: userGroup.dataValues.id },
+            })
+            return res.status(200).json({
+                message: 'Kicked out successfully',
+            })
+        } else {
+            return res.status(400).json({
+                message: 'Can not demote this participant',
+            })
+        }
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
 }
 
-module.exports = { getAllGroup, getGroup, addGroup, updateGroup, deleteGroup }
+const kickOutParticipant = async (req, res) => {
+    const userId = req.body.userId
+    const groupId = req.params.id
+
+    try {
+        await User_Group.destroy({
+            where: {
+                user_id: userId,
+                group_id: groupId,
+            },
+        })
+        // await userGroup.update({})
+
+        return res.status(200).json({
+            message: 'Kicked out successfully',
+        })
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+
+module.exports = {
+    getAllGroup,
+    getGroup,
+    addGroup,
+    updateGroup,
+    deleteGroup,
+    joinGroupByLink,
+    demoteParticipant,
+    promoteParticipant,
+    kickOutParticipant,
+}
