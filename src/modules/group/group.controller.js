@@ -116,7 +116,36 @@ const deleteGroup = async (req, res) => {
     res.status(200).send({ message: `Group is deleted` })
 }
 
-const joinGroupByLink = async (req, res) => {}
+const joinGroupByLink = async (req, res) => {
+    const userId = req.user.id
+    const groupId = req.params.id
+
+    try {
+        const [userGroup, created] = await User_Group.findOrCreate({
+            where: {
+                user_id: userId,
+                group_id: groupId,
+            },
+            default: {
+                user_id: userId,
+                group_id: groupId,
+                role_id: 3,
+            },
+        })
+
+        // is_created:
+        //      + true: user NOT JOINED group before --> Now user JOINED
+        //      + false: user JOINED group before
+        return res.status(200).json({
+            is_created: created,
+        })
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
 
 const promoteParticipant = async (req, res) => {
     const userId = req.body.userId
