@@ -16,6 +16,14 @@ router.delete('/:id', authMiddleware.authenticateToken, groupController.deleteGr
 
 router.post('/:id/invite', authMiddleware.authenticateToken, groupController.joinGroupByLink)
 
+router.post('/:id/invite-email', authMiddleware.authenticateToken, groupController.joinGroupByEmail)
+
+router.post(
+    '/:id/send-email',
+    authMiddleware.authenticateToken,
+    groupController.sendInvitationByEmail
+)
+
 router.put('/:id/promote', authMiddleware.authenticateToken, groupController.promoteParticipant)
 
 router.put('/:id/demote', authMiddleware.authenticateToken, groupController.demoteParticipant)

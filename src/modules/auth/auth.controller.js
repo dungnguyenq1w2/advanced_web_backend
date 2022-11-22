@@ -39,7 +39,7 @@ const register = async (req, res) => {
             const resultUser = { id: addUser.id, name: addUser.name, email: addUser.email }
             await bcrypt
                 .hash(addUser.email + process.env.REFRESH_TOKEN_SECRET, parseInt(process.env.SALT))
-                .then(async (error, hashedEmail) => {
+                .then(async (hashedEmail, error) => {
                     if (error) {
                         console.log(error)
                         return res.status(500).json({ message: 'Bcrypt failed' })
@@ -150,6 +150,7 @@ const verify = async (req, res) => {
                                 accessToken,
                                 refreshToken,
                                 id: user.id,
+                                image: user.image,
                                 name: user.name,
                                 email: user.email,
                             })

@@ -3,7 +3,7 @@
 ###
 # @name getGroup
 GET {{baseUrl}}/groups/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6bnVsbCwiZW1haWwiOiJsZW5nb2NkdTEyMzY1NHRsQGdtYWlsLmNvbSIsImlzX2F1dGgiOjEsImlhdCI6MTY2ODkxMzc5MiwiZXhwIjoxNjY4OTE3MzkyfQ.Gr2TXnvkVvF-ksFsH9qVHNuDR596oAPLEKyszw8me0Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkTFqW5nIDEiLCJpbWFnZSI6IiIsImVtYWlsIjoiZHVuZzFAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjY5MTAyMjA5LCJleHAiOjE2NjkxMDU4MDl9.COwnm7pQnYyE4VQVjJMzMPdl0UnpcWjxau8qOtOMTpA
 
 ###
 # @name getAllGroups
@@ -31,9 +31,9 @@ Content-Type: application/json
 }
 
 ###
-# @name demoteParticipant
-DELETE {{baseUrl}}/groups/1/kick-out
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+# @name kickOutParticipant
+DELETE {{baseUrl}}/groups/13/kick-out
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJExaluZyBOZ3V54buFbiIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkxMDk4NzksImV4cCI6MTY2OTExMzQ3OX0.66sEqTi3wpNNt7_wEhTBm0sqxdx-QUrrL9NMjVCiE9g
 Content-Type: application/json
 
 {
@@ -41,7 +41,17 @@ Content-Type: application/json
 }
 
 ###
-# @name inviteParticipant
+# @name inviteParticipantByLink
 POST {{baseUrl}}/groups/2/invite
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwOTc4MDEsImV4cCI6MTY2OTEwMTQwMX0.AinRq0QHzy0GzO5pKUf8NY8TsatY3sdZFPVxR2dzaBw
 
+###
+# @name inviteParticipantByEmail
+POST {{baseUrl}}/groups/1/invite-email
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJExaluZyBOZ3V54buFbiIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkxMDgwNzAsImV4cCI6MTY2OTExMTY3MH0.sjAaJQzq5A0TpqqUZCRAciqyhkwmKPV4uVPl7ewrUp8
+Content-Type: application/json
+
+{
+    "email": "dungnguyenq1w2@gmail.com",
+    "token": "$2b$10$EcfaRBPWHkWnU9Pp3IQ3Z.vwMVkbYBGg8UFbQc3jFv72glX01jchi"
+}

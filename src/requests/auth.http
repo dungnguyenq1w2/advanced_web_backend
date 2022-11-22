@@ -6,8 +6,8 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-    "name": "Nguyễn Tấn Dũng",
-    "email": "hoduy220@gmail.com",
+    "name": "Dũng Nguyễn",
+    "email": "dungnguyenq1w2@gmail.com",
     "password": "123456" ,
     "confirmPassword": "123456" 
 }
@@ -18,7 +18,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "lengocdu123654tl@gmail.com",
+    "email": "dungnguyenq1w2@gmail.com",
     "password": "123456" 
 }
 

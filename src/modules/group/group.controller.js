@@ -1,5 +1,7 @@
 const db = require('#common/database/index.js')
 
+const bcrypt = require('bcrypt')
+
 const mailer = require('#root/utils/mailer.js')
 const { htmlContent } = require('#common/config/mailConfig.js')
 const { htmlContentInviteGroup } = require('../../common/config/mailConfig')
@@ -63,7 +65,7 @@ const getGroup = async (req, res) => {
         const meInGroup = group.dataValues.participants.find(
             (participant) => participant.user.id === req.user.id
         )
-        group.dataValues['role'] = meInGroup.dataValues.role_id
+        group.dataValues['my_role'] = meInGroup.dataValues.role_id
         return res.status(200).send({
             data: group,
         })
@@ -122,7 +124,7 @@ const joinGroupByLink = async (req, res) => {
         const userId = parseInt(req.user.id)
         const groupId = parseInt(req.params.id)
 
-        let userGroup = await User_Group.findOne({
+        const userGroup = await User_Group.findOne({
             where: {
                 user_id: userId,
                 group_id: groupId,
@@ -130,10 +132,13 @@ const joinGroupByLink = async (req, res) => {
         })
 
         if (!userGroup) {
-            userGroup = await User_Group.create({
+            const newUserGroup = await User_Group.create({
                 user_id: userId,
                 group_id: groupId,
                 role_id: 3,
+            })
+            return res.status(200).json({
+                user: newUserGroup,
             })
         }
 
@@ -149,17 +154,78 @@ const joinGroupByLink = async (req, res) => {
 }
 
 const joinGroupByEmail = async (req, res) => {
-    const emails = req.body.emails
-    const groupId = req.params.id
-
     try {
+        const groupId = parseInt(req.params.id)
+        const userId = parseInt(req.user.id)
+        const userEmail = req.user.email
+        const { email, token } = req.body
+
+        if (userEmail !== email) {
+            return res.status(400).json({
+                message: 'You are not the user invited',
+            })
+        } else {
+            await bcrypt.compare(
+                email + process.env.REFRESH_TOKEN_SECRET,
+                token,
+                async (err, result) => {
+                    if (result) {
+                        const userGroup = await User_Group.findOne({
+                            where: {
+                                user_id: userId,
+                                group_id: groupId,
+                            },
+                        })
+
+                        if (!userGroup) {
+                            const newUserGroup = await User_Group.create({
+                                user_id: userId,
+                                group_id: groupId,
+                                role_id: 3,
+                            })
+                            return res.status(200).json({
+                                user: newUserGroup,
+                            })
+                        }
+
+                        return res.status(200).json({
+                            user: userGroup,
+                        })
+                    } else {
+                        console.log(err)
+                        return res.status(404).json({ status: 404, message: 'Error token' })
+                    }
+                }
+            )
+        }
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+
+const sendInvitationByEmail = async (req, res) => {
+    try {
+        const emails = req.body.emails
+        const groupId = parseInt(req.params.id)
+
         const group = await Group.findByPk(groupId)
         for (const email of emails) {
-            await mailer.sendMail(
-                email,
-                `Invite Group [${group.dataValues.name}]`,
-                htmlContentInviteGroup()
-            )
+            await bcrypt
+                .hash(email.email + process.env.REFRESH_TOKEN_SECRET, parseInt(process.env.SALT))
+                .then(async (hashedEmail, error) => {
+                    if (error) {
+                        console.log(error)
+                        return res.status(500).json({ message: 'Bcrypt failed' })
+                    }
+                    await mailer.sendMail(
+                        email.email,
+                        `Invite Group [${group.dataValues.name}]`,
+                        htmlContentInviteGroup(groupId, email.email, hashedEmail)
+                    )
+                })
         }
     } catch (error) {
         console.log('Error:', error)
@@ -206,6 +272,7 @@ const promoteParticipant = async (req, res) => {
         })
     }
 }
+
 const demoteParticipant = async (req, res) => {
     try {
         const userId = parseInt(req.body.userId)
@@ -254,6 +321,7 @@ const kickOutParticipant = async (req, res) => {
     try {
         const userId = parseInt(req.body.userId)
         const groupId = parseInt(req.params.id)
+
         await User_Group.destroy({
             where: {
                 user_id: userId,
@@ -279,6 +347,7 @@ module.exports = {
     updateGroup,
     deleteGroup,
     joinGroupByLink,
+    sendInvitationByEmail,
     joinGroupByEmail,
     demoteParticipant,
     promoteParticipant,
