@@ -3,8 +3,8 @@ const db = require('#common/database/index.js')
 const bcrypt = require('bcrypt')
 
 const mailer = require('#root/utils/mailer.js')
-const { htmlContent } = require('#common/config/mailConfig.js')
-const { htmlContentInviteGroup } = require('../../common/config/mailConfig')
+const { htmlContent } = require('#common/config/mail.config.js')
+const { htmlContentInviteGroup } = require('#common/config/mail.config.js')
 
 // Create main Model
 const Group = db.Group
