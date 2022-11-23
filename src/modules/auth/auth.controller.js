@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 
 const db = require('#common/database/index.js')
 const mailer = require('#root/utils/mailer.js')
-const { htmlContent } = require('#common/config/mailConfig.js')
+const { htmlContent } = require('#common/config/mail.config.js')
 const { generateAccessToken, generateTokens, verifyRefreshToken } = require('#root/utils/token.js')
 const {
     loginBodyValidation,
@@ -204,8 +204,8 @@ const googleLogin = async (req, res) => {
 
     const payload = ticket.getPayload()
 
-    // let user = await User.findOne({ email: payload?.email })
-    let user = await User.findOne({
+
+    const user = await User.findOne({
         where: { email: payload?.email },
         attributes: { exclude: ['refresh_token', 'phone'] },
         raw: true,

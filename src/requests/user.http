@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name update
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+
+{
+    "name": "Nguyễn Tấn Dũng",
+    "email": "dung",
+    "password": "123456" ,
+    "confirmPassword": "123456" 
+}

@@ -1,5 +1,5 @@
 const db = require('#common/database/index.js')
-
+const cloudinary = require('../../utils/cloudinary')
 // Create main Model
 const User = db.User
 
@@ -8,25 +8,18 @@ const User = db.User
 const getAllUser = async (req, res) => {
     const users = await User.findAll({ attributes: ['id', 'name', 'phone', 'image', 'email'] })
 
-    res.status(200).send({ data: users })
+    res.status(200).json({ data: users })
 }
 
 const getUser = async (req, res) => {
     const id = req.params.id
     if (id != '0') {
         const user = await User.findByPk(id, {
-            include: {
-                model: Account,
-                as: 'account',
-            },
+            attributes: ['id', 'name', 'phone', 'image', 'email'],
         })
 
-        res.status(200).send({
-            data: {
-                id: user.dataValues.id,
-                name: user.dataValues.name,
-                username: user.dataValues.account.dataValues.username,
-            },
+        res.status(200).json({
+            data: user,
         })
     }
 }
@@ -36,16 +29,28 @@ const addUser = async (req, res) => {
 
     const user = await User.create(addUser)
 
-    res.status(201).send({ data: user })
+    res.status(201).json({ data: user })
 }
 
 const updateUser = async (req, res) => {
-    const id = req.params.id
-    const updatedUser = req.body
+    try {
+        const id = req.params.id
+        const dataUser = req.body
 
-    const user = await User.update(updatedUser, { where: { id: id } })
-
-    res.status(200).send({ data: user })
+        if (dataUser.image) dataUser.image = await cloudinary.uploadImage(dataUser.image)
+        const [row] = await User.update(dataUser, { where: { id: id } })
+        if(row > 0){
+            const user = await User.findByPk(id, {attributes:['id', 'name', 'image', 'email']})
+            return res.status(200).json({ data: user })
+        }
+        else
+        {
+            return res.status(400).json({ message: 'failed' })
+        }
+        
+    } catch (error) {
+        console.log('err: ', error)
+    }
 }
 
 const deleteUser = async (req, res) => {

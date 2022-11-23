@@ -1,5 +1,5 @@
 const nodeMailer = require('nodemailer')
-const mailConfig = require('../common/config/mailConfig')
+const mailConfig = require('../common/config/mail.config')
 
 const sendMail = (to, subject, htmlContent) => {
     const transport = nodeMailer.createTransport({
