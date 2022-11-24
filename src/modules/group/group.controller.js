@@ -340,6 +340,43 @@ const kickOutParticipant = async (req, res) => {
     }
 }
 
+const setOwner = async (req, res) => {
+    try {
+        const currentOwnerId = parseInt(req.body.currentOwnerId)
+        const selectedUserId = parseInt(req.body.selectedUserId)
+        const groupId = parseInt(req.params.id)
+
+        // selected participant become owner
+        await User_Group.update(
+            { role_id: 1 },
+            {
+                where: {
+                    user_id: selectedUserId,
+                    group_id: groupId,
+                },
+            }
+        )
+        // owner become co-owner
+        await User_Group.update(
+            { role_id: 2 },
+            {
+                where: {
+                    user_id: currentOwnerId,
+                    group_id: groupId,
+                },
+            }
+        )
+        return res.status(200).json({
+            message: 'Set owner successfully',
+        })
+    } catch (error) {
+        console.log('Error:', error)
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        })
+    }
+}
+
 module.exports = {
     getAllGroup,
     getGroup,
@@ -352,4 +389,5 @@ module.exports = {
     demoteParticipant,
     promoteParticipant,
     kickOutParticipant,
+    setOwner,
 }

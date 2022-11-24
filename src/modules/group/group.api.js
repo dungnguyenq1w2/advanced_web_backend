@@ -30,4 +30,6 @@ router.put('/:id/demote', authMiddleware.authenticateToken, groupController.demo
 
 router.delete('/:id/kick-out', authMiddleware.authenticateToken, groupController.kickOutParticipant)
 
+router.put('/:id/set-owner', authMiddleware.authenticateToken, groupController.setOwner)
+
 module.exports = router

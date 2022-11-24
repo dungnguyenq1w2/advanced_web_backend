@@ -195,49 +195,51 @@ const logout = async (req, res) => {
 }
 
 const googleLogin = async (req, res) => {
-    const { token } = req.body
+    try {
+        const { token } = req.body
 
-    const ticket = await googleClient.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-    })
-
-    const payload = ticket.getPayload()
-
-
-    const user = await User.findOne({
-        where: { email: payload?.email },
-        attributes: { exclude: ['refresh_token', 'phone'] },
-        raw: true,
-    })
-
-    let test = 'account create now'
-    if (!user) {
-        user = await User.create({
-            name: payload?.name,
-            image: payload?.picture,
-            email: payload?.email,
-            is_auth: 1,
-            // is_auth: 0,
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
         })
-        user = user.get({ plain: true })
-    } else {
-        test = 'account create before'
+
+        const payload = ticket.getPayload()
+
+        let user = await User.findOne({
+            where: { email: payload?.email },
+            attributes: { exclude: ['refresh_token', 'phone'] },
+            raw: true,
+        })
+
+        if (!user) {
+            user = await User.create({
+                name: payload?.name,
+                image: payload?.picture,
+                email: payload?.email,
+                is_auth: 1,
+            })
+            user = user.get({ plain: true })
+
+            if (!user) {
+                return res.status(400).json({ message: 'Cannot register account for this email' })
+            }
+        }
+
+        delete user.password
+        const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
+
+        res.status(200).json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            accessToken,
+            refreshToken,
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
-
-    // delete user.password
-    const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
-
-    res.status(200).json({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        accessToken,
-        refreshToken,
-        token,
-        test,
-    })
 }
 
 module.exports = { register, login, getNewToken, verify, logout, googleLogin }
