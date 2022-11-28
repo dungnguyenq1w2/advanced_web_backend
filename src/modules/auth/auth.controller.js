@@ -72,15 +72,15 @@ const login = async (req, res) => {
             attributes: { exclude: ['refresh_token', 'phone'] },
             raw: true,
         })
-        if (!user) return res.status(400).json({ message: 'Tài khoản không tồn tại' })
+        if (!user) return res.status(400).json({ message: 'Account does not exist' })
 
         const verifiedPassword = await bcrypt.compare(loginUser.password, user.password)
-        if (!verifiedPassword) return res.status(400).json({ message: 'Sai mật khẩu' })
+        if (!verifiedPassword) return res.status(400).json({ message: 'Password incorrect' })
 
         delete user.password
         const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
 
-        if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
+        if (!user.is_auth) return res.status(401).json({ message: 'Unverified account' })
 
         return res.status(200).json({
             accessToken,
