@@ -183,7 +183,7 @@ const joinGroupByEmail = async (req, res) => {
 
         if (userEmail !== email) {
             return res.status(400).json({
-                message: 'You are not the user invited',
+                message: `You are not the user invited! Please login by ${email}`,
             })
         } else {
             await bcrypt.compare(
@@ -248,6 +248,7 @@ const sendInvitationByEmail = async (req, res) => {
                     )
                 })
         }
+        return res.status(200).json({ message: 'Send email successfully' })
     } catch (error) {
         console.log('Error:', error)
         return res.status(500).json({

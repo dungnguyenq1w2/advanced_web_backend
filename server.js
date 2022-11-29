@@ -3,8 +3,6 @@ require('dotenv').config()
 const express = require('express')
 
 const bodyParser = require('body-parser')
-const multer = require('multer')
-const upload = multer()
 const cors = require('cors')
 
 const db = require('#common/database/index.js')
@@ -22,7 +20,6 @@ app.use(
         credentials: 'true',
     })
 )
-app.use(upload.array()) 
 
 // -----> Production Environment
 // db.sequelize
