@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const db = require('#common/database/index.js')
 const mailer = require('#root/utils/mailer.js')
 const { htmlContent } = require('#common/config/mail.config.js')
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('#common/config/googleOAuth2.config.js')
 const { generateAccessToken, generateTokens, verifyRefreshToken } = require('#root/utils/token.js')
 const {
     loginBodyValidation,
@@ -13,9 +14,10 @@ const {
 const { OAuth2Client } = require('google-auth-library')
 
 const googleClient = new OAuth2Client({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientId: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
 })
+
 // create main Model
 const User = db.User
 

@@ -39,15 +39,12 @@ const updateUser = async (req, res) => {
 
         if (dataUser.image) dataUser.image = await cloudinary.uploadImage(dataUser.image)
         const [row] = await User.update(dataUser, { where: { id: id } })
-        if(row > 0){
-            const user = await User.findByPk(id, {attributes:['id', 'name', 'image', 'email']})
+        if (row > 0) {
+            const user = await User.findByPk(id, { attributes: ['id', 'name', 'image', 'email'] })
             return res.status(200).json({ data: user })
-        }
-        else
-        {
+        } else {
             return res.status(400).json({ message: 'failed' })
         }
-        
     } catch (error) {
         console.log('err: ', error)
     }

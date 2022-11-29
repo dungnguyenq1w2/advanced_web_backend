@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const mailer = require('#root/utils/mailer.js')
 const { htmlContent } = require('#common/config/mail.config.js')
 const { htmlContentInviteGroup } = require('#common/config/mail.config.js')
+const { encryptString, decryptString } = require('#root/utils/crypto.js')
 
 // Create main Model
 const Group = db.Group
@@ -119,31 +120,51 @@ const deleteGroup = async (req, res) => {
     }
 }
 
+const generateGroupInviteCode = (req, res) => {
+    try {
+        const groupId = req.params.id
+
+        if (!groupId) {
+            return res.status(400).json({ message: 'Cannot generate group-invite link' })
+        }
+
+        const encryptedString = encryptString(groupId)
+
+        return res.status(200).json({ code: encryptedString })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
 const joinGroupByLink = async (req, res) => {
     try {
         const userId = parseInt(req.user.id)
-        const groupId = parseInt(req.params.id)
+        const code = req.params.code
+
+        const decryptedGroupId = parseInt(decryptString(code))
 
         const userGroup = await User_Group.findOne({
             where: {
                 user_id: userId,
-                group_id: groupId,
+                group_id: decryptedGroupId,
             },
         })
 
         if (!userGroup) {
             const newUserGroup = await User_Group.create({
                 user_id: userId,
-                group_id: groupId,
+                group_id: decryptedGroupId,
                 role_id: 3,
             })
             return res.status(200).json({
                 user: newUserGroup,
+                groupId: decryptedGroupId,
             })
         }
 
         return res.status(200).json({
             user: userGroup,
+            groupId: decryptedGroupId,
         })
     } catch (error) {
         console.log('Error:', error)
@@ -390,4 +411,5 @@ module.exports = {
     promoteParticipant,
     kickOutParticipant,
     setOwner,
+    generateGroupInviteCode,
 }
