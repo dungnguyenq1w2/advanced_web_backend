@@ -14,7 +14,7 @@ router.put('/:id', authMiddleware.authenticateToken, groupController.updateGroup
 
 router.delete('/:id', authMiddleware.authenticateToken, groupController.deleteGroup)
 
-router.post('/:id/invite', authMiddleware.authenticateToken, groupController.joinGroupByLink)
+router.post('/:code/invite', authMiddleware.authenticateToken, groupController.joinGroupByLink)
 
 router.post('/:id/invite-email', authMiddleware.authenticateToken, groupController.joinGroupByEmail)
 
@@ -31,5 +31,11 @@ router.put('/:id/demote', authMiddleware.authenticateToken, groupController.demo
 router.delete('/:id/kick-out', authMiddleware.authenticateToken, groupController.kickOutParticipant)
 
 router.put('/:id/set-owner', authMiddleware.authenticateToken, groupController.setOwner)
+
+router.post(
+    '/:id/generate-invite-code',
+    authMiddleware.authenticateToken,
+    groupController.generateGroupInviteCode
+)
 
 module.exports = router

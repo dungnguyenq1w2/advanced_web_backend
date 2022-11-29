@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const db = require('#common/database/index.js')
 const mailer = require('#root/utils/mailer.js')
 const { htmlContent } = require('#common/config/mail.config.js')
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('#common/config/googleOAuth2.config.js')
 const { generateAccessToken, generateTokens, verifyRefreshToken } = require('#root/utils/token.js')
 const {
     loginBodyValidation,
@@ -13,9 +14,10 @@ const {
 const { OAuth2Client } = require('google-auth-library')
 
 const googleClient = new OAuth2Client({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientId: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
 })
+
 // create main Model
 const User = db.User
 
@@ -72,15 +74,15 @@ const login = async (req, res) => {
             attributes: { exclude: ['refresh_token', 'phone'] },
             raw: true,
         })
-        if (!user) return res.status(400).json({ message: 'Tài khoản không tồn tại' })
+        if (!user) return res.status(400).json({ message: 'Account does not exist' })
 
         const verifiedPassword = await bcrypt.compare(loginUser.password, user.password)
-        if (!verifiedPassword) return res.status(400).json({ message: 'Sai mật khẩu' })
+        if (!verifiedPassword) return res.status(400).json({ message: 'Password incorrect' })
 
         delete user.password
         const { accessToken, refreshToken } = await generateTokens({ ...user, image: '' })
 
-        if (!user.is_auth) return res.status(401).json({ message: 'Chưa xác thực tài khoản' })
+        if (!user.is_auth) return res.status(401).json({ message: 'Unverified account' })
 
         return res.status(200).json({
             accessToken,
