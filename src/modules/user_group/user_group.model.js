@@ -18,6 +18,9 @@ module.exports = (Sequelize, DataTypes) => {
         {
             timestamps: false,
             tableName: 'user_group',
+        },
+        {
+            freezeTableName: true,
         }
     )
     User_Group.associate = (models) => {

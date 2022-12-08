@@ -10,6 +10,7 @@ const db = require('#common/database/index.js')
 const authApi = require('#modules/auth/auth.api.js')
 const userApi = require('#modules/user/user.api.js')
 const groupApi = require('#modules/group/group.api.js')
+const presentationApi = require('#modules/presentation/presentation.api.js')
 
 const app = express()
 
@@ -39,6 +40,7 @@ db.sequelize.sync().then(() => {
 app.use('/api/auth', authApi)
 app.use('/api/users', userApi)
 app.use('/api/groups', groupApi)
+app.use('/api/presentations', presentationApi)
 
 app.get('/', (req, res) => {
     res.send('hello')

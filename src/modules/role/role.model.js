@@ -27,11 +27,11 @@ module.exports = (Sequelize, DataTypes) => {
     )
     Role.associate = (models) => {
         // Associate Role(1) - User_Group(*)
-        Role.hasOne(models.User_Group, {
+        Role.hasMany(models.User_Group, {
             foreignKey: 'role_id',
             as: 'roles',
         })
     }
-    
+
     return Role
 }

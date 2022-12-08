@@ -36,6 +36,9 @@ module.exports = (Sequelize, DataTypes) => {
         {
             timestamps: false,
             tableName: 'user',
+        },
+        {
+            freezeTableName: true,
         }
     )
     User.associate = (models) => {
@@ -43,6 +46,18 @@ module.exports = (Sequelize, DataTypes) => {
         User.hasMany(models.User_Group, {
             foreignKey: 'user_id',
             as: 'users',
+        })
+
+        // Associate User(1) - Presentation(*)
+        User.hasMany(models.Presentation, {
+            foreignKey: 'host_id',
+            as: 'presentations',
+        })
+
+        // Associate User(1) - User_Choice(*)
+        User.hasMany(models.User_Choice, {
+            foreignKey: 'user_id',
+            as: 'choice_users',
         })
     }
     return User
