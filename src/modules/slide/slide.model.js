@@ -10,9 +10,6 @@ module.exports = (Sequelize, DataTypes) => {
         {
             timestamps: false,
             tableName: 'slide',
-        },
-        {
-            freezeTableName: true,
         }
     )
 

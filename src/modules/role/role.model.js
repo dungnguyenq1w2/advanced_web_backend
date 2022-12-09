@@ -10,9 +10,6 @@ module.exports = (Sequelize, DataTypes) => {
         {
             timestamps: false,
             tableName: 'role',
-        },
-        {
-            freezeTableName: true,
         }
     )
     Role.bulkCreate(

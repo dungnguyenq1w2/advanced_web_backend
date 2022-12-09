@@ -14,6 +14,9 @@ const sequelize = new Sequelize(DB, USER, PASSWORD, {
         acquire: pool.acquire,
         idle: pool.idle,
     },
+    define: {
+        freezeTableName: true,
+    },
 })
 
 sequelize
