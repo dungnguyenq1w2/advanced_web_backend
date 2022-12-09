@@ -4,7 +4,7 @@ module.exports = (Sequelize, DataTypes) => {
         {
             user_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
+                allowNull: true,
             },
             choice_id: {
                 type: DataTypes.INTEGER,

@@ -12,6 +12,10 @@ module.exports = (Sequelize, DataTypes) => {
             },
             group_id: {
                 type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            code: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
         },
