@@ -1,4 +1,4 @@
-import hostSocket from './host'
-import memberSocket from './member'
+const hostSocket = require('./host')
+const guestSocket = require('./guest')
 
-export { hostSocket, memberSocket }
+module.exports = { hostSocket, guestSocket }

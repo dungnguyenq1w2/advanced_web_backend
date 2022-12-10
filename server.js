@@ -18,6 +18,7 @@ const groupApi = require('#modules/group/group.api.js')
 const presentationApi = require('#modules/presentation/presentation.api.js')
 const slideApi = require('#modules/slide/slide.api.js')
 
+const { hostSocket, guestSocket } = require('./src/common/socket')
 const slideSocket = require('#modules/slide/slide.socket.js')
 
 const app = express()
@@ -72,21 +73,23 @@ app.get('/', (req, res) => {
 // Host socket
 io.of('/host').on('connection', (socket) => {
     console.log('Host connected')
-    // Subscribe Presentation room
-    hostJoinPresentationRoom(socket)
+    // Subscribe Slide room
+    hostSocket.hostJoinSlideRoom(socket)
 
-    // Unsubscribe Presentation room
-    hostLeavePresentationRoom(socket)
+    // Unsubscribe Slide room
+    hostSocket.hostLeaveSlideRoom(socket)
+
+    slideSocket(io, socket)
 })
 
 // Member socket
 io.of('/guest').on('connection', (socket) => {
     console.log('Member connected')
-    // Subscribe Presentation room
-    guestJoinPresentationRoom(socket)
+    // Subscribe Slide room
+    guestSocket.guestJoinSlideRoom(socket)
 
-    // Unsubscribe Presentation room
-    guestLeavePresentationRoom(socket)
+    // Unsubscribe Slide room
+    guestSocket.guestLeaveSlideRoom(socket)
 
     slideSocket(io, socket)
 })
