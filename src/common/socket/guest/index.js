@@ -1,25 +1,25 @@
-const memberJoinPresentationRoom = (socket) => {
+const guestJoinPresentationRoom = (socket) => {
     //:JOIN:Client Supplied Room
     socket.on('subscribe', function (presentationId) {
         try {
             const room = `presentation${presentationId}`
-            // console.log('[socket]', 'member join room :', room)
+            // console.log('[socket]', 'guest join room :', room)
             socket.join(room)
-            // socket.to(room).emit('member joined', socket.id)
+            // socket.to(room).emit('guest joined', socket.id)
         } catch (e) {
             console.log('[error]', 'join room :', e)
             socket.emit('error', 'couldnt perform requested action')
         }
     })
 }
-const memberLeavePresentationRoom = (socket) => {
+const guestLeavePresentationRoom = (socket) => {
     //:LEAVE:Client Supplied Room
     socket.on('unsubscribe', function (presentationId) {
         try {
             const room = `presentation${presentationId}`
-            // console.log('[socket]', 'member leave room :', room)
+            // console.log('[socket]', 'guest leave room :', room)
             socket.leave(room)
-            // socket.to(room).emit('member left', socket.id)
+            // socket.to(room).emit('guest left', socket.id)
         } catch (e) {
             console.log('[error]', 'leave room :', e)
             socket.emit('error', 'couldnt perform requested action')
@@ -27,4 +27,4 @@ const memberLeavePresentationRoom = (socket) => {
     })
 }
 
-export { memberJoinPresentationRoom, memberLeavePresentationRoom }
+export { guestJoinPresentationRoom, guestLeavePresentationRoom }

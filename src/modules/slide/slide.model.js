@@ -2,6 +2,10 @@ module.exports = (Sequelize, DataTypes) => {
     const Slide = Sequelize.define(
         'Slide',
         {
+            question: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             presentation_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -20,10 +24,16 @@ module.exports = (Sequelize, DataTypes) => {
             as: 'presentation',
         })
 
-        // Associate Slide(1) - Question(*)
-        Slide.hasMany(models.Question, {
+        // // Associate Slide(1) - Question(*)
+        // Slide.hasMany(models.Question, {
+        //     foreignKey: 'slide_id',
+        //     as: 'questions',
+        // })
+
+        // Associate Slide(1) - Choice(*)
+        Slide.hasMany(models.Choice, {
             foreignKey: 'slide_id',
-            as: 'questions',
+            as: 'choices',
         })
     }
 

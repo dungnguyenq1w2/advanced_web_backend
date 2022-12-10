@@ -6,7 +6,7 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            question_id: {
+            slide_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -18,10 +18,10 @@ module.exports = (Sequelize, DataTypes) => {
     )
 
     Choice.associate = (models) => {
-        // Associate Question(1) - Choice(*)
-        Choice.belongsTo(models.Question, {
-            foreignKey: 'question_id',
-            as: 'question',
+        // Associate Slide(1) - Choice(*)
+        Choice.belongsTo(models.Slide, {
+            foreignKey: 'slide_id',
+            as: 'slide',
         })
 
         // Associate Choice(1) - User_Choice(*)

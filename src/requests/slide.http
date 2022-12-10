@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name getSlideResultForHost
+GET {{baseUrl}}/slides/1/host
+
+###
+# @name getSlideResultForGuest
+GET {{baseUrl}}/slides/1/guest
+Content-Type: application/json
+
+{
+    "guestId": "1"
+}

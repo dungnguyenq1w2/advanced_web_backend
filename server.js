@@ -16,6 +16,9 @@ const authApi = require('#modules/auth/auth.api.js')
 const userApi = require('#modules/user/user.api.js')
 const groupApi = require('#modules/group/group.api.js')
 const presentationApi = require('#modules/presentation/presentation.api.js')
+const slideApi = require('#modules/slide/slide.api.js')
+
+const slideSocket = require('#modules/slide/slide.socket.js')
 
 const app = express()
 
@@ -58,6 +61,7 @@ app.use('/api/auth', authApi)
 app.use('/api/users', userApi)
 app.use('/api/groups', groupApi)
 app.use('/api/presentations', presentationApi)
+app.use('/api/slides', slideApi)
 
 app.get('/', (req, res) => {
     res.send('Advanced Web')
@@ -73,22 +77,18 @@ io.of('/host').on('connection', (socket) => {
 
     // Unsubscribe Presentation room
     hostLeavePresentationRoom(socket)
-
-    // progressSocket(io, socket)
-    // matchSocket(io, socket)
 })
 
 // Member socket
-io.of('/member').on('connection', (socket) => {
+io.of('/guest').on('connection', (socket) => {
     console.log('Member connected')
     // Subscribe Presentation room
-    userJoinPresentationRoom(socket)
+    guestJoinPresentationRoom(socket)
 
     // Unsubscribe Presentation room
-    userLeavePresentationRoom(socket)
+    guestLeavePresentationRoom(socket)
 
-    // matchSocket(io, socket)
-    // progressSocket(socket)
+    slideSocket(io, socket)
 })
 //#endregion
 
