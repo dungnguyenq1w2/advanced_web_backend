@@ -4,6 +4,6 @@ const presentationController = require('./presentation.controller.js')
 
 const router = Router()
 
-router.get('/', presentationController.getAllPresentaion)
+router.get('/:userId', presentationController.getAllPresentaionOfOneUser)
 
 module.exports = router

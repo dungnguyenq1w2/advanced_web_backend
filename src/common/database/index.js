@@ -54,7 +54,7 @@ db.Choice = Choice(sequelize, DataTypes)
 db.User_Choice = User_Choice(sequelize, DataTypes)
 
 db.sequelize
-    // .sync({ force: false, match: /_test$/ }) // important, chạy chỉ khi  tên DB kết thúc bằng test
+    //.sync({ force: false, match: /_test$/ }) // important, chạy chỉ khi tên DB kết thúc bằng test
     .sync({ alter: true })
     .then(() => {
         console.log('yes re-sync done!')

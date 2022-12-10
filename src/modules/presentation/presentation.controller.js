@@ -5,14 +5,19 @@ const User = db.User
 
 // Main work
 
-const getAllPresentaion = async (req, res) => {
-    const presentation = await Presentation.findAll({
-        include: {
-            model: User,
-            as: 'host',
-        },
-    })
-    res.status(200).json({ data: presentation })
+const getAllPresentaionOfOneUser = async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId)
+        const presentations = await Presentation.findAll({
+            where: {
+                host_id: userId,
+            },
+        })
+        return res.status(200).json({ data: presentations })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
-module.exports = { getAllPresentaion }
+module.exports = { getAllPresentaionOfOneUser }

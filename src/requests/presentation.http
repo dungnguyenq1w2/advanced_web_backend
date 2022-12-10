@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5000/api
 
 ###
-# @name getPresentation
-GET {{baseUrl}}/presentations
+# @name getPresentationOfOneUser
+GET {{baseUrl}}/presentations/3
