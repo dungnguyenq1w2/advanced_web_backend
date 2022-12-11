@@ -4,6 +4,8 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
+router.post('/', slideController.getAllSlides)
+
 router.get('/:slideId/host', slideController.getSlideResultForHost)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)

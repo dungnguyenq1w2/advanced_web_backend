@@ -1,6 +1,15 @@
 @baseUrl = http://localhost:5000/api
 
 ###
+# @name getAllSlides
+POST {{baseUrl}}/slides
+Content-Type: application/json
+
+{
+    "presentationId": 1
+}
+
+###
 # @name getSlideResultForHost
 GET {{baseUrl}}/slides/1/host
 

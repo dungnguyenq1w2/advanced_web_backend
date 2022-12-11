@@ -8,7 +8,7 @@ router.get('/', authMiddleware.authenticateToken, groupController.getAllGroup)
 
 router.get('/:id', authMiddleware.authenticateToken, groupController.getGroup)
 
-router.post('/', authMiddleware.authenticateToken, groupController.addGroup)
+router.post('/create', authMiddleware.authenticateToken, groupController.addGroup)
 
 router.put('/:id', authMiddleware.authenticateToken, groupController.updateGroup)
 

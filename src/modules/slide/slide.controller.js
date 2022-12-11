@@ -8,6 +8,23 @@ const User_Choice = db.User_Choice
 
 // Main work
 
+const getAllSlides = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.body.presentationId)
+
+        const slides = await Slide.findAll({
+            where: {
+                presentation_id: presentationId,
+            },
+        })
+
+        return res.status(200).json({ data: slides })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const getSlideResultForHost = async (req, res) => {
     try {
         const slideId = req.params.slideId
@@ -88,4 +105,8 @@ const getSlideResultForGuest = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
-module.exports = { getSlideResultForHost, getSlideResultForGuest }
+module.exports = {
+    getAllSlides,
+    getSlideResultForHost,
+    getSlideResultForGuest,
+}
