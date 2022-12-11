@@ -6,9 +6,9 @@ GET {{baseUrl}}/slides/1/host
 
 ###
 # @name getSlideResultForGuest
-GET {{baseUrl}}/slides/1/guest
-Content-Type: application/json
+GET {{baseUrl}}/slides/1/guest?guestId=1
+# Content-Type: application/json
 
-{
-    "guestId": "1"
-}
+# {
+#     "guestId": "1"
+# }
