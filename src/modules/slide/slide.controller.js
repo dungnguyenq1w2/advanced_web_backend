@@ -11,6 +11,7 @@ const User_Choice = db.User_Choice
 const getSlideResultForHost = async (req, res) => {
     try {
         const slideId = req.params.slideId
+
         const slideResult = await Slide.findByPk(slideId, {
             include: {
                 model: Choice,
@@ -35,16 +36,19 @@ const getSlideResultForHost = async (req, res) => {
                 // },
             },
         })
-        res.status(200).json({ data: slideResult })
+        return res.status(200).json({ data: slideResult })
     } catch (error) {
         console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
 const getSlideResultForGuest = async (req, res) => {
     try {
         const slideId = parseInt(req.params.slideId)
-        const guestId = req.body.guestId
+        const guestId = req.query.guestId
+
+        if (!(slideId && guestId)) return res.status(400)
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
@@ -68,14 +72,20 @@ const getSlideResultForGuest = async (req, res) => {
                     as: 'user_choices',
                     required: false,
                     where: {
-                        user_id: guestId,
+                        guest_id: guestId,
                     },
                 },
             },
         })
-        res.status(200).json({ data: slideResult })
+        slideResult.dataValues['isChosen'] = slideResult.dataValues.choices.find(
+            (e) => e.user_choices.length === 1
+        )
+            ? true
+            : false
+        return res.status(200).json({ data: slideResult })
     } catch (error) {
         console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 module.exports = { getSlideResultForHost, getSlideResultForGuest }

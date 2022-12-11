@@ -51,11 +51,11 @@ module.exports = (Sequelize, DataTypes) => {
             as: 'presentations',
         })
 
-        // Associate User(1) - User_Choice(*)
-        User.hasMany(models.User_Choice, {
-            foreignKey: 'user_id',
-            as: 'choice_users',
-        })
+        // // Associate User(1) - User_Choice(*)
+        // User.hasMany(models.User_Choice, {
+        //     foreignKey: 'user_id',
+        //     as: 'choice_users',
+        // })
     }
     return User
 }

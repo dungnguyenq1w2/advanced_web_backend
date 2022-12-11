@@ -1,9 +1,9 @@
-const hostJoinPresentationRoom = (socket) => {
+const hostJoinSlideRoom = (socket) => {
     //:JOIN:Client Supplied Room
-    socket.on('subscribe', function (presentationId) {
+    socket.on('subscribe', function (slideId) {
         try {
-            const room = `presentation${presentationId}`
-            // console.log('[socket]', 'host join room :', room)
+            const room = `slide${slideId}`
+            console.log('[socket]', 'host join room :', room)
             socket.join(room)
             // socket.to(room).emit('user joined', socket.id)
         } catch (e) {
@@ -13,12 +13,12 @@ const hostJoinPresentationRoom = (socket) => {
     })
 }
 
-const hostLeavePresentationRoom = (socket) => {
+const hostLeaveSlideRoom = (socket) => {
     //:LEAVE:Client Supplied Room
-    socket.on('unsubscribe', function (presentationId) {
+    socket.on('unsubscribe', function (slideId) {
         try {
-            const room = `presentation${presentationId}`
-            // console.log('[socket]', 'host leave room :', room)
+            const room = `slide${slideId}`
+            console.log('[socket]', 'host leave room :', room)
             socket.leave(room)
             // socket.to(room).emit('user left', socket.id)
         } catch (e) {
@@ -28,4 +28,4 @@ const hostLeavePresentationRoom = (socket) => {
     })
 }
 
-export { hostJoinPresentationRoom, hostLeavePresentationRoom }
+module.exports = { hostJoinSlideRoom, hostLeaveSlideRoom }
