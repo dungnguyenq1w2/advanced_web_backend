@@ -3,3 +3,8 @@
 ###
 # @name getPresentationOfOneUser
 GET {{baseUrl}}/presentations/3
+
+
+###
+# @name getAllSlides
+GET {{baseUrl}}/presentations/1/slides

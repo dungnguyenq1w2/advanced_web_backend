@@ -6,4 +6,6 @@ const router = Router()
 
 router.get('/:userId', presentationController.getAllPresentaionOfOneUser)
 
+router.get('/:presentationId/slides', presentationController.getAllSlides)
+
 module.exports = router
