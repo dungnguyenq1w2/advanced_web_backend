@@ -7,4 +7,6 @@ const router = Router()
 router.get('/:userId', presentationController.getAllPresentaionOfOneUser)
 router.delete('/:presentationId', presentationController.deletePresentationById)
 
+router.get('/:presentationId/slides', presentationController.getAllSlides)
+
 module.exports = router

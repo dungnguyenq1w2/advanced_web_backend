@@ -4,8 +4,6 @@ const User_Choice = db.User_Choice
 
 const slideSocket = (io, socket) => {
     socket.on('client-send-choices', async (slideId, guestId, choices) => {
-        console.log('🚀 ~ guestId', guestId)
-        console.log('🚀 ~ choices', choices)
         io.of('/guest').to(`slide${slideId}`).emit('server-send-choices', choices)
         io.of('/host').to(`slide${slideId}`).emit('server-send-choices', choices)
 
