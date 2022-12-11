@@ -5,5 +5,6 @@ const presentationController = require('./presentation.controller.js')
 const router = Router()
 
 router.get('/:userId', presentationController.getAllPresentaionOfOneUser)
+router.delete('/:presentationId', presentationController.deletePresentationById)
 
 module.exports = router

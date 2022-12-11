@@ -3,3 +3,7 @@
 ###
 # @name getPresentationOfOneUser
 GET {{baseUrl}}/presentations/3
+
+###
+# @name deletePresentationById
+DELETE {{baseUrl}}/presentations/5
