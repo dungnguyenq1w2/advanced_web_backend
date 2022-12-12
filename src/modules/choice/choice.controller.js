@@ -37,7 +37,49 @@ const getChoiceById = async (req, res) => {
     }
 }
 
+const addChoice = async (req, res) => {
+    try {
+        const newChoice = req.body
+        const choice = await Choice.create(newChoice)
+
+        return res.status(201).send({ data: choice })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const updateChoice = async (req, res) => {
+    try {
+        const choiceId = parseInt(req.params.choiceId)
+        const newChoice = req.body
+
+        const choice = await Choice.update(newChoice, { where: { id: choiceId } })
+
+        res.status(200).send({ data: choice })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const deleteChoice = async (req, res) => {
+    try {
+        const choiceId = req.params.choiceId
+
+        await Choice.destroy({ where: { id: choiceId } })
+
+        res.status(200).send({ message: `Choice is deleted` })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllChoices,
     getChoiceById,
+    addChoice,
+    updateChoice,
+    deleteChoice,
 }

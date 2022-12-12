@@ -8,4 +8,10 @@ router.post('/', choiceController.getAllChoices)
 
 router.get('/:choiceId', choiceController.getChoiceById)
 
+router.post('/add', choiceController.addChoice)
+
+router.put('/:choiceId', choiceController.updateChoice)
+
+router.delete('/:choiceId', choiceController.deleteChoice)
+
 module.exports = router

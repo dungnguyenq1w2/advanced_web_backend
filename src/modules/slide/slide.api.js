@@ -8,6 +8,8 @@ router.post('/', slideController.getAllSlides)
 
 router.get('/:slideId', slideController.getSlideById)
 
+router.put('/:slideId', slideController.updateSlide)
+
 router.get('/:slideId/host', slideController.getSlideResultForHost)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)
