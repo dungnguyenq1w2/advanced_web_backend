@@ -52,6 +52,19 @@ const updateSlide = async (req, res) => {
     }
 }
 
+const deleteSlide = async (req, res) => {
+    try {
+        const slideId = req.params.slideId
+
+        await Slide.destroy({ where: { id: slideId } })
+
+        res.status(200).send({ message: `Slide is deleted` })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const getSlideResultForHost = async (req, res) => {
     try {
         const slideId = req.params.slideId
@@ -136,6 +149,7 @@ module.exports = {
     getAllSlides,
     getSlideById,
     updateSlide,
+    deleteSlide,
     getSlideResultForHost,
     getSlideResultForGuest,
 }

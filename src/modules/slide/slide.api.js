@@ -10,6 +10,8 @@ router.get('/:slideId', slideController.getSlideById)
 
 router.put('/:slideId', slideController.updateSlide)
 
+router.delete('/:slideId', slideController.deleteSlide)
+
 router.get('/:slideId/host', slideController.getSlideResultForHost)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)
