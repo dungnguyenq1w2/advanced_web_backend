@@ -25,11 +25,42 @@ const getAllSlides = async (req, res) => {
     }
 }
 
+const getFirstSlide = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.body.presentationId)
+
+        const slide = await Slide.findOne({
+            where: {
+                presentation_id: presentationId,
+            },
+            // order: [['id', 'ASC']],
+        })
+
+        return res.status(200).json({ data: { id: slide.id } })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const getSlideById = async (req, res) => {
     try {
         const slideId = parseInt(req.params.slideId)
 
         const slide = await Slide.findByPk(slideId)
+
+        return res.status(200).json({ data: slide })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const addSlide = async (req, res) => {
+    try {
+        const newSlide = req.body
+
+        const slide = await Slide.create(newSlide)
 
         return res.status(200).json({ data: slide })
     } catch (error) {
@@ -147,7 +178,9 @@ const getSlideResultForGuest = async (req, res) => {
 }
 module.exports = {
     getAllSlides,
+    getFirstSlide,
     getSlideById,
+    addSlide,
     updateSlide,
     deleteSlide,
     getSlideResultForHost,

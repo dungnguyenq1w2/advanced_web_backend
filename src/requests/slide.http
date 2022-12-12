@@ -10,6 +10,15 @@ Content-Type: application/json
 }
 
 ###
+# @name getFirstSlideOfPresentation
+POST {{baseUrl}}/slides/first-slide
+Content-Type: application/json
+
+{
+    "presentationId": 1
+}
+
+###
 # @name getSlideById
 GET {{baseUrl}}/slides/1
 

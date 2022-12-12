@@ -6,7 +6,11 @@ const router = Router()
 
 router.post('/', slideController.getAllSlides)
 
+router.post('/first-slide', slideController.getFirstSlide)
+
 router.get('/:slideId', slideController.getSlideById)
+
+router.post('/add', slideController.addSlide)
 
 router.put('/:slideId', slideController.updateSlide)
 
