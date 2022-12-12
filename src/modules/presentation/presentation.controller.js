@@ -5,7 +5,6 @@ const Slide = db.Slide
 const User = db.User
 const Choice = db.Choice
 const User_Choice = db.User_Choice
-const Slide = db.Slide
 
 // Main work
 
@@ -18,6 +17,20 @@ const getAllPresentaionOfOneUser = async (req, res) => {
             },
         })
         return res.status(200).json({ data: presentations })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const checkCode = async (req, res) => {
+    try {
+        const {code} = req.body
+        const presentation = await Presentation.findOne({ where: { code: code } })
+        if(presentation)
+        return res.status(200).json({ data: presentation })
+        return res.status(403).json({ data: {status: false} })
+    
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal Server Error' })
@@ -102,4 +115,9 @@ const getAllSlides = async (req, res) => {
     }
 }
 
-module.exports = { getAllPresentaionOfOneUser, getAllSlides, deletePresentationById }
+module.exports = {
+    getAllPresentaionOfOneUser,
+    getAllSlides,
+    deletePresentationById,
+    checkCode,
+}

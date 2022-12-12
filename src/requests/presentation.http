@@ -11,3 +11,12 @@ DELETE {{baseUrl}}/presentations/5
 ###
 # @name getAllSlides
 GET {{baseUrl}}/presentations/1/slides
+
+###
+# @name checkCode
+POST {{baseUrl}}/presentations/checkCode
+Content-Type: application/json
+
+{
+    "code": "01234567"
+}
