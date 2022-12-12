@@ -10,6 +10,10 @@ Content-Type: application/json
 }
 
 ###
+# @name getSlideById
+GET {{baseUrl}}/slides/1
+
+###
 # @name getSlideResultForHost
 GET {{baseUrl}}/slides/1/host
 

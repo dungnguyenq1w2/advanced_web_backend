@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name getAllChoices
+POST {{baseUrl}}/choices
+Content-Type: application/json
+
+{
+    "slideId": 1
+}
+
+###
+# @name getChoiceById
+GET {{baseUrl}}/choices/1

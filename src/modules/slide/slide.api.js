@@ -6,6 +6,8 @@ const router = Router()
 
 router.post('/', slideController.getAllSlides)
 
+router.get('/:slideId', slideController.getSlideById)
+
 router.get('/:slideId/host', slideController.getSlideResultForHost)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)

@@ -17,6 +17,7 @@ const userApi = require('#modules/user/user.api.js')
 const groupApi = require('#modules/group/group.api.js')
 const presentationApi = require('#modules/presentation/presentation.api.js')
 const slideApi = require('#modules/slide/slide.api.js')
+const choiceApi = require('#modules/choice/choice.api.js')
 
 const { hostSocket, guestSocket } = require('./src/common/socket')
 const slideSocket = require('#modules/slide/slide.socket.js')
@@ -63,6 +64,7 @@ app.use('/api/users', userApi)
 app.use('/api/groups', groupApi)
 app.use('/api/presentations', presentationApi)
 app.use('/api/slides', slideApi)
+app.use('/api/choices', choiceApi)
 
 app.get('/', (req, res) => {
     res.send('Advanced Web')

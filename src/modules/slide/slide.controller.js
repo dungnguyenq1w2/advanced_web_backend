@@ -25,6 +25,19 @@ const getAllSlides = async (req, res) => {
     }
 }
 
+const getSlideById = async (req, res) => {
+    try {
+        const slideId = parseInt(req.params.slideId)
+
+        const slide = await Slide.findByPk(slideId)
+
+        return res.status(200).json({ data: slide })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const getSlideResultForHost = async (req, res) => {
     try {
         const slideId = req.params.slideId
@@ -107,6 +120,7 @@ const getSlideResultForGuest = async (req, res) => {
 }
 module.exports = {
     getAllSlides,
+    getSlideById,
     getSlideResultForHost,
     getSlideResultForGuest,
 }
