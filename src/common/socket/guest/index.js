@@ -3,7 +3,7 @@ const guestJoinSlideRoom = (socket) => {
     socket.on('subscribe', function (slideId) {
         try {
             const room = `slide${slideId}`
-            console.log('[socket]', 'guest join room :', room)
+            // console.log('[socket]', 'guest join room :', room)
             socket.join(room)
             // socket.to(room).emit('guest joined', socket.id)
         } catch (e) {
@@ -17,7 +17,7 @@ const guestLeaveSlideRoom = (socket) => {
     socket.on('unsubscribe', function (slideId) {
         try {
             const room = `slide${slideId}`
-            console.log('[socket]', 'guest leave room :', room)
+            // console.log('[socket]', 'guest leave room :', room)
             socket.leave(room)
             // socket.to(room).emit('guest left', socket.id)
         } catch (e) {
