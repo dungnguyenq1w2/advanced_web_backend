@@ -25,12 +25,11 @@ const getAllPresentaionOfOneUser = async (req, res) => {
 
 const checkCode = async (req, res) => {
     try {
-        const {code} = req.body
-        const presentation = await Presentation.findOne({ where: { code: code } })
-        if(presentation)
-        return res.status(200).json({ data: presentation })
-        return res.status(403).json({ data: {status: false} })
-    
+        const { code } = req.body
+        console.log(req.body)
+        const presentation = await Presentation.findOne({ where: { code: code }, raw: true })
+        if (presentation) return res.status(200).json({ data: presentation })
+        return res.status(400).json({ data: { status: false } })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal Server Error' })
@@ -86,8 +85,8 @@ const deletePresentationById = async (req, res) => {
                     id: presentation.id,
                 },
             })
-            return res.status(200).json( { data: {status: true} })
-        } else return res.status(403).json({ data: {status: false }})
+            return res.status(200).json({ data: { status: true } })
+        } else return res.status(403).json({ data: { status: false } })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal Server Error' })
