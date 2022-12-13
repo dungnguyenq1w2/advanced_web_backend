@@ -20,3 +20,14 @@ Content-Type: application/json
 {
     "code": "01234567"
 }
+
+###
+# @name addPresentation
+POST {{baseUrl}}/presentations/add
+Content-Type: application/json
+
+{
+    "hostId": 3, 
+    "name": "abc"
+}
+

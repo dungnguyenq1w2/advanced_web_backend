@@ -26,12 +26,37 @@ const getAllPresentaionOfOneUser = async (req, res) => {
 const checkCode = async (req, res) => {
     try {
         const { code } = req.body
-        console.log(req.body)
+        if (!code) return res.status(400)
+
         const presentation = await Presentation.findOne({ where: { code: code }, raw: true })
         if (presentation) return res.status(200).json({ data: presentation })
         return res.status(400).json({ data: { status: false } })
     } catch (error) {
-        console.log(error)
+        console.log('Error checkCode: ', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const addPresentation = async (req, res) => {
+    try {
+        const { hostId, name } = req.body
+        if(!hostId || !name)return res.status(400)
+
+        const codes = await Presentation.findAll({
+            attributes: ['code'],
+            raw: true
+        })
+        var code = null
+        do {
+            code = '' + Math.floor(Math.random() * 100000000)
+            while (code.length < 8) code = '0' + code
+        } while (codes.includes(code))
+        
+        const presentation = await Presentation.create({ host_id: hostId, code: code, name: name })
+
+        return res.status(200).json({ data: presentation })
+    } catch (error) {
+        console.log('Error addPresentation: ', error)
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
@@ -39,6 +64,8 @@ const checkCode = async (req, res) => {
 const deletePresentationById = async (req, res) => {
     try {
         const presentationId = parseInt(req.params.presentationId)
+        if (!presentationId) return res.status(400)
+
         const presentation = await Presentation.findByPk(presentationId, {
             attributes: ['id'],
             include: {
@@ -119,4 +146,5 @@ module.exports = {
     getAllSlides,
     deletePresentationById,
     checkCode,
+    addPresentation,
 }
