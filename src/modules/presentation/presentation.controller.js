@@ -40,18 +40,18 @@ const checkCode = async (req, res) => {
 const addPresentation = async (req, res) => {
     try {
         const { hostId, name } = req.body
-        if(!hostId || !name)return res.status(400)
+        if (!hostId || !name) return res.status(400)
 
         const codes = await Presentation.findAll({
             attributes: ['code'],
-            raw: true
+            raw: true,
         })
         var code = null
         do {
             code = '' + Math.floor(Math.random() * 100000000)
             while (code.length < 8) code = '0' + code
         } while (codes.includes(code))
-        
+
         const presentation = await Presentation.create({ host_id: hostId, code: code, name: name })
 
         return res.status(200).json({ data: presentation })
@@ -141,10 +141,44 @@ const getAllSlides = async (req, res) => {
     }
 }
 
+const getPresentationById = async (req, res) => {
+    try {
+        const { presentationId } = req.params
+        if (!presentationId) return res.status(400)
+
+        const presentation = await Presentation.findOne({
+            where: { id: presentationId },
+            raw: true,
+        })
+        if (presentation) return res.status(200).json({ data: presentation })
+        return res.status(400).json({ data: { status: false } })
+    } catch (error) {
+        console.log('Error getPresentationById: ', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const updatePresentationName = async (req, res) => {
+    try {
+        const { presentationId, name } = req.body
+        if (!presentationId || !name) return res.status(400)
+
+        const [row] = await Presentation.update({ name: name }, { where: { id: presentationId } })
+        if (row > 0) 
+            return res.status(200).json({ data: name })
+        return res.status(400).json()
+    } catch (error) {
+        console.log('Error updatePresentationName: ', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllPresentaionOfOneUser,
     getAllSlides,
     deletePresentationById,
     checkCode,
     addPresentation,
+    getPresentationById,
+    updatePresentationName,
 }

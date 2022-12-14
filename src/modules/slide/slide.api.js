@@ -4,19 +4,23 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
-router.post('/', slideController.getAllSlides)
+router.post('/', authMiddleware.authenticateToken, slideController.getAllSlides)
 
-router.post('/first-slide', slideController.getFirstSlide)
+router.post('/first-slide', authMiddleware.authenticateToken, slideController.getFirstSlide)
 
-router.get('/:slideId', slideController.getSlideById)
+router.get('/:slideId', authMiddleware.authenticateToken, slideController.getSlideById)
 
-router.post('/add', slideController.addSlide)
+router.post('/add', authMiddleware.authenticateToken, slideController.addSlide)
 
-router.put('/:slideId', slideController.updateSlide)
+router.put('/:slideId', authMiddleware.authenticateToken, slideController.updateSlide)
 
-router.delete('/:slideId', slideController.deleteSlide)
+router.delete('/:slideId', authMiddleware.authenticateToken, slideController.deleteSlide)
 
-router.get('/:slideId/host', slideController.getSlideResultForHost)
+router.get(
+    '/:slideId/host',
+    authMiddleware.authenticateToken,
+    slideController.getSlideResultForHost
+)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)
 
