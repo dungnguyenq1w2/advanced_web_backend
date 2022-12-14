@@ -16,7 +16,11 @@ router.put('/:slideId', authMiddleware.authenticateToken, slideController.update
 
 router.delete('/:slideId', authMiddleware.authenticateToken, slideController.deleteSlide)
 
-router.get('/:slideId/host', slideController.getSlideResultForHost)
+router.get(
+    '/:slideId/host',
+    authMiddleware.authenticateToken,
+    slideController.getSlideResultForHost
+)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)
 

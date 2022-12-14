@@ -14,8 +14,18 @@ router.delete(
     authMiddleware.authenticateToken,
     presentationController.deletePresentationById
 )
+router.get(
+    '/presentationId/:presentationId',
+    authMiddleware.authenticateToken,
+    presentationController.getPresentationById
+)
 router.post('/checkCode', presentationController.checkCode)
 router.get('/:presentationId/slides', presentationController.getAllSlides)
 router.post('/add', authMiddleware.authenticateToken, presentationController.addPresentation)
+router.put(
+    '/updateName',
+    authMiddleware.authenticateToken,
+    presentationController.updatePresentationName
+)
 
 module.exports = router

@@ -31,3 +31,16 @@ Content-Type: application/json
     "name": "abc"
 }
 
+###
+# @name getPresentationById
+GET {{baseUrl}}/presentations/presentationId/1
+
+###
+# @name updatePresentationName
+PUT {{baseUrl}}/presentations/updateName
+Content-Type: application/json
+
+{
+    "presentationId": 5, 
+    "name": "abc"
+}
