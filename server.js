@@ -36,7 +36,7 @@ const httpsServer = createServer(app)
 
 const io = new Server(httpsServer, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: process.env.APP_FRONT_END_URL,
         methods: ALL,
     },
 })
