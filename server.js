@@ -74,7 +74,7 @@ app.get('/', (req, res) => {
 //#region Socket
 // Host socket
 io.of('/host').on('connection', (socket) => {
-    console.log('Host connected')
+    // console.log('Host connected')
     // Subscribe Slide room
     hostSocket.hostJoinSlideRoom(socket)
 
@@ -86,7 +86,7 @@ io.of('/host').on('connection', (socket) => {
 
 // Member socket
 io.of('/guest').on('connection', (socket) => {
-    console.log('Member connected')
+    // console.log('Guest connected')
     // Subscribe Slide room
     guestSocket.guestJoinSlideRoom(socket)
 
