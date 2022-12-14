@@ -2,7 +2,7 @@
 
 ###
 # @name getPresentationOfOneUser
-GET {{baseUrl}}/presentations/3
+GET {{baseUrl}}/presentations
 
 ###
 # @name deletePresentationById
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 ###
 # @name getPresentationById
-GET {{baseUrl}}/presentations/presentationId/1
+GET {{baseUrl}}/presentations/1
 
 ###
 # @name updatePresentationName
@@ -44,3 +44,8 @@ Content-Type: application/json
     "presentationId": 5, 
     "name": "abc"
 }
+
+###
+# @name createPresentationCode
+POST {{baseUrl}}/presentations/createCode/3
+Content-Type: application/json

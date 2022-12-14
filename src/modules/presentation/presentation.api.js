@@ -5,7 +5,7 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 const router = Router()
 
 router.get(
-    '/:userId',
+    '/',
     authMiddleware.authenticateToken,
     presentationController.getAllPresentaionOfOneUser
 )
@@ -15,7 +15,7 @@ router.delete(
     presentationController.deletePresentationById
 )
 router.get(
-    '/presentationId/:presentationId',
+    '/:presentationId',
     authMiddleware.authenticateToken,
     presentationController.getPresentationById
 )
@@ -26,6 +26,11 @@ router.put(
     '/updateName',
     authMiddleware.authenticateToken,
     presentationController.updatePresentationName
+)
+router.post(
+    '/createCode/:presentationId',
+    authMiddleware.authenticateToken,
+    presentationController.createPresentationCode
 )
 
 module.exports = router

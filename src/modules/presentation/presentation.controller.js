@@ -10,7 +10,7 @@ const User_Choice = db.User_Choice
 
 const getAllPresentaionOfOneUser = async (req, res) => {
     try {
-        const userId = parseInt(req.params.userId)
+        const userId = req.user.id
         const presentations = await Presentation.findAll({
             where: {
                 host_id: userId,
@@ -150,6 +150,7 @@ const getPresentationById = async (req, res) => {
             where: { id: presentationId },
             raw: true,
         })
+
         if (presentation) return res.status(200).json({ data: presentation })
         return res.status(400).json({ data: { status: false } })
     } catch (error) {
@@ -173,6 +174,31 @@ const updatePresentationName = async (req, res) => {
     }
 }
 
+const createPresentationCode = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.params.presentationId)
+        if (!presentationId) return res.status(400)
+
+        const codes = await Presentation.findAll({
+            attributes: ['code'],
+            raw: true,
+        })
+        var code = null
+        do {
+            code = '' + Math.floor(Math.random() * 100000000)
+            while (code.length < 8) code = '0' + code
+        } while (codes.includes(code))
+
+       const [row] = await Presentation.update({ code: code }, { where: { id: presentationId } })
+
+       if (row > 0) return res.status(200).json({ data: code })
+       return res.status(400)
+    } catch (error) {
+        console.log('Error createPresentationCode: ', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllPresentaionOfOneUser,
     getAllSlides,
@@ -181,4 +207,5 @@ module.exports = {
     addPresentation,
     getPresentationById,
     updatePresentationName,
+    createPresentationCode,
 }
