@@ -4,6 +4,22 @@ module.exports = (Sequelize, DataTypes) => {
         {
             question: {
                 type: DataTypes.STRING,
+                allowNull: true,
+            },
+            heading: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            subheading: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            paragraph: {
+                type: DataTypes.TEXT,
+                allowNull: true,
+            },
+            type: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
             presentation_id: {
@@ -23,17 +39,20 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'presentation_id',
             as: 'presentation',
         })
-
         // // Associate Slide(1) - Question(*)
         // Slide.hasMany(models.Question, {
         //     foreignKey: 'slide_id',
         //     as: 'questions',
         // })
-
         // Associate Slide(1) - Choice(*)
         Slide.hasMany(models.Choice, {
             foreignKey: 'slide_id',
             as: 'choices',
+        })
+        // Associate Slide_Type(1) - Slide(*)
+        Slide.belongsTo(models.Slide_Type, {
+            foreignKey: 'type',
+            as: 'slide_type',
         })
     }
 

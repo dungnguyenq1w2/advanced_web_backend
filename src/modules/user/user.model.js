@@ -44,18 +44,36 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'user_id',
             as: 'users',
         })
-
         // Associate User(1) - Presentation(*)
         User.hasMany(models.Presentation, {
             foreignKey: 'host_id',
             as: 'presentations',
         })
-
         // // Associate User(1) - User_Choice(*)
         // User.hasMany(models.User_Choice, {
         //     foreignKey: 'user_id',
         //     as: 'choice_users',
         // })
+        // Associate User(1) - Notification(*)
+        User.hasMany(models.Notification, {
+            foreignKey: 'user_id',
+            as: 'notifications',
+        })
+        // Associate User(1) - Message(*)
+        User.hasMany(models.Message, {
+            foreignKey: 'user_id',
+            as: 'messages',
+        })
+        // Associate User(1) - Question(*)
+        User.hasMany(models.Question, {
+            foreignKey: 'user_id',
+            as: 'questions',
+        })
+        // Associate User(1) - Vote(*)
+        User.hasMany(models.Vote, {
+            foreignKey: 'user_id',
+            as: 'votes',
+        })
     }
     return User
 }

@@ -18,6 +18,18 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            is_published: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true,
+            },
+            is_presenting: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            is_edititing: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
         },
         {
             timestamps: false,
@@ -31,17 +43,25 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'host_id',
             as: 'host',
         })
-
         // Associate Group(1) - Presentation(*)
         Presentation.belongsTo(models.Group, {
             foreignKey: 'group_id',
             as: 'group',
         })
-
         // Associate Presentation(1) - Slide(*)
         Presentation.hasMany(models.Slide, {
             foreignKey: 'presentation_id',
             as: 'slides',
+        })
+        // Associate Presentation(1) - Message(*)
+        Presentation.hasMany(models.Message, {
+            foreignKey: 'presentation_id',
+            as: 'messages',
+        })
+        // Associate Presentation(1) - Question(*)
+        Presentation.hasMany(models.Question, {
+            foreignKey: 'presentation_id',
+            as: 'questions',
         })
     }
 
