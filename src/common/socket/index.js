@@ -1,4 +1,4 @@
 const hostSocket = require('./host')
-const guestSocket = require('./guest')
+const memberSocket = require('./member')
 
-module.exports = { hostSocket, guestSocket }
+module.exports = { hostSocket, memberSocket }

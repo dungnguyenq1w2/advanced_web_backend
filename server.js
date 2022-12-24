@@ -20,7 +20,7 @@ const slideApi = require('#modules/slide/slide.api.js')
 const choiceApi = require('#modules/choice/choice.api.js')
 const notificationApi = require('#modules/notification/notification.api.js')
 
-const { hostSocket, guestSocket } = require('./src/common/socket')
+const { hostSocket, memberSocket } = require('./src/common/socket')
 const slideSocket = require('#modules/slide/slide.socket.js')
 
 const app = express()
@@ -87,13 +87,13 @@ io.of('/host').on('connection', (socket) => {
 })
 
 // Member socket
-io.of('/guest').on('connection', (socket) => {
-    // console.log('Guest connected')
+io.of('/member').on('connection', (socket) => {
+    // console.log('Member connected')
     // Subscribe Slide room
-    guestSocket.guestJoinSlideRoom(socket)
+    memberSocket.memberJoinSlideRoom(socket)
 
     // Unsubscribe Slide room
-    guestSocket.guestLeaveSlideRoom(socket)
+    memberSocket.memberLeaveSlideRoom(socket)
 
     slideSocket(io, socket)
 })

@@ -1,8 +1,10 @@
 @baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzE4ODc4NTgsImV4cCI6MTY3MTg5MTQ1OH0.dwlvc13aNY-SzINBxNUJFyLG3i3kr2r2M2K4gzvZTaY
 
 ###
 # @name getAllSlides
 POST {{baseUrl}}/slides
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -25,12 +27,8 @@ GET {{baseUrl}}/slides/1
 ###
 # @name getSlideResultForHost
 GET {{baseUrl}}/slides/1/host
+Authorization: Bearer {{token}}
 
 ###
-# @name getSlideResultForGuest
-GET {{baseUrl}}/slides/1/guest?guestId=1
-# Content-Type: application/json
-
-# {
-#     "guestId": "1"
-# }
+# @name getSlideResultForMember
+GET {{baseUrl}}/slides/1/member?memberId=1
