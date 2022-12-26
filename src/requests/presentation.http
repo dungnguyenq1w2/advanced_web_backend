@@ -1,16 +1,28 @@
 @baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
 
 ###
 # @name getPresentationOfOneUser
 GET {{baseUrl}}/presentations
 
 ###
-# @name deletePresentationById
-DELETE {{baseUrl}}/presentations/5
+# @name getPresentationOfGroup
+GET {{baseUrl}}/presentations/group/2
+Authorization: Bearer {{token}}
 
 ###
-# @name getAllSlides
-GET {{baseUrl}}/presentations/1/slides
+# @name getPresentationForHostById
+GET {{baseUrl}}/presentations/5/host?groupId=2
+Authorization: Bearer {{token}}
+
+###
+# @name getPresentationForMemberById
+GET {{baseUrl}}/presentations/5/member
+# Authorization: Bearer {{token}}
+
+###
+# @name deletePresentationById
+DELETE {{baseUrl}}/presentations/5
 
 ###
 # @name checkCode

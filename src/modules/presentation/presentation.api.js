@@ -4,10 +4,11 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
+router.get('/', authMiddleware.authenticateToken, presentationController.getAllPresentaionOfOneUser)
 router.get(
-    '/',
+    '/group/:groupId',
     authMiddleware.authenticateToken,
-    presentationController.getAllPresentaionOfOneUser
+    presentationController.getAllPresentaionOfGroup
 )
 router.delete(
     '/:presentationId',
@@ -20,7 +21,12 @@ router.get(
     presentationController.getPresentationById
 )
 router.post('/checkCode', presentationController.checkCode)
-router.get('/:presentationId/slides', presentationController.getAllSlides)
+router.get(
+    '/:presentationId/host',
+    authMiddleware.authenticateToken,
+    presentationController.getPresentationForHostById
+)
+router.get('/:presentationId/member', presentationController.getPresentationForMemberById)
 router.post('/add', authMiddleware.authenticateToken, presentationController.addPresentation)
 router.put(
     '/updateName',

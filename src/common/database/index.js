@@ -39,6 +39,7 @@ const User_Group = require('#modules/user_group/user_group.model.js')
 const Role = require('#modules/role/role.model.js')
 
 const Presentation = require('#modules/presentation/presentation.model.js')
+const Presentation_Group = require('#modules/presentation_group/presentation_group.model.js')
 const Slide = require('#modules/slide/slide.model.js')
 const Slide_Type = require('#modules/slide_type/slide_type.model.js')
 
@@ -58,6 +59,7 @@ db.User_Group = User_Group(sequelize, DataTypes)
 db.Role = Role(sequelize, DataTypes)
 
 db.Presentation = Presentation(sequelize, DataTypes)
+db.Presentation_Group = Presentation_Group(sequelize, DataTypes)
 db.Slide = Slide(sequelize, DataTypes)
 db.Slide_Type = Slide_Type(sequelize, DataTypes)
 

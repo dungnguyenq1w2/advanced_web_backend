@@ -117,7 +117,9 @@ const deleteSlide = async (req, res) => {
 
 const getSlideResultForHost = async (req, res) => {
     try {
-        const slideId = req.params.slideId
+        const slideId = parseInt(req.params.slideId)
+
+        if (!slideId) return res.status(400).json({ message: 'Invalid slide id' })
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
@@ -143,7 +145,7 @@ const getSlideResultForHost = async (req, res) => {
                     required: false,
                     include: {
                         model: User,
-                        as: 'user',
+                        as: 'member',
                         attributes: ['id', 'name', 'image'],
                         required: false,
                     },
@@ -162,7 +164,8 @@ const getSlideResultForMember = async (req, res) => {
         const slideId = parseInt(req.params.slideId)
         const memberId = req.query.memberId
 
-        if (!(slideId && memberId)) return res.status(400)
+        if (!(slideId && memberId))
+            return res.status(400).json({ message: 'Invalid slide id or member id' })
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
@@ -186,7 +189,7 @@ const getSlideResultForMember = async (req, res) => {
                     as: 'user_choices',
                     required: false,
                     where: {
-                        user_id: memberId,
+                        member_id: memberId,
                     },
                 },
             },

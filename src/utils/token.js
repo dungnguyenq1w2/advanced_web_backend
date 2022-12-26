@@ -10,7 +10,7 @@ const generateAccessToken = async (user) => {
     delete user.iat
     try {
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '1h',
+            expiresIn: '7d',
         })
 
         return Promise.resolve(accessToken)
