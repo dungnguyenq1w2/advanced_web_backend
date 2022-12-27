@@ -78,10 +78,10 @@ app.get('/', (req, res) => {
 io.of('/host').on('connection', (socket) => {
     // console.log('Host connected')
     // Subscribe Slide room
-    hostSocket.hostJoinSlideRoom(socket)
+    hostSocket.hostJoinSlideRoom(io, socket)
 
     // Unsubscribe Slide room
-    hostSocket.hostLeaveSlideRoom(socket)
+    hostSocket.hostLeaveSlideRoom(io, socket)
 
     slideSocket(io, socket)
 })
@@ -90,10 +90,10 @@ io.of('/host').on('connection', (socket) => {
 io.of('/member').on('connection', (socket) => {
     // console.log('Member connected')
     // Subscribe Slide room
-    memberSocket.memberJoinSlideRoom(socket)
+    memberSocket.memberJoinSlideRoom(io, socket)
 
     // Unsubscribe Slide room
-    memberSocket.memberLeaveSlideRoom(socket)
+    memberSocket.memberLeaveSlideRoom(io, socket)
 
     slideSocket(io, socket)
 })

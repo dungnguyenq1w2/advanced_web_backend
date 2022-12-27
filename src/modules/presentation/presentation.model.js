@@ -10,10 +10,10 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            group_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
+            // group_id: {
+            //     type: DataTypes.INTEGER,
+            //     allowNull: true,
+            // },
             code: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -29,6 +29,11 @@ module.exports = (Sequelize, DataTypes) => {
             is_edititing: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
+            },
+            created_at: {
+                type: 'TIMESTAMP',
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                allowNull: false,
             },
         },
         {

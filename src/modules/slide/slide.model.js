@@ -26,6 +26,11 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
+            created_at: {
+                type: 'TIMESTAMP',
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                allowNull: false,
+            },
         },
         {
             timestamps: false,
