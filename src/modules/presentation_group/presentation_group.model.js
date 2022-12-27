@@ -27,6 +27,11 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'presentation_id',
             as: 'presentation',
         })
+        // Associate Presentation_Group(1) - User_Choice(*)
+        Presentation_Group.hasMany(models.User_Choice, {
+            foreignKey: 'presentation_group_id',
+            as: 'presentation_group_choices',
+        })
     }
     return Presentation_Group
 }

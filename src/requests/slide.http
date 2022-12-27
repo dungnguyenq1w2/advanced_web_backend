@@ -26,9 +26,9 @@ GET {{baseUrl}}/slides/1
 
 ###
 # @name getSlideResultForHost
-GET {{baseUrl}}/slides/1/host
+GET {{baseUrl}}/slides/12/host?presentationGroupId=4
 Authorization: Bearer {{token}}
 
 ###
 # @name getSlideResultForMember
-GET {{baseUrl}}/slides/1/member?memberId=3
+GET {{baseUrl}}/slides/12/member?memberId=2&presentationGroupId=4

@@ -12,12 +12,12 @@ Authorization: Bearer {{token}}
 
 ###
 # @name getPresentationForHostById
-GET {{baseUrl}}/presentations/5/host?groupId=2
+GET {{baseUrl}}/presentations/5/host?presentationGroupId=4
 Authorization: Bearer {{token}}
 
 ###
 # @name getPresentationForMemberById
-GET {{baseUrl}}/presentations/5/member
+GET {{baseUrl}}/presentations/5/member?presentationGroupId=4
 # Authorization: Bearer {{token}}
 
 ###

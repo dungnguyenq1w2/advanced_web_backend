@@ -1,11 +1,14 @@
 const db = require('#common/database/index.js')
 const sequelize = require('sequelize')
+const { QueryTypes } = require('sequelize')
 
 // Create main Model
 const User = db.User
 const Slide = db.Slide
 const Choice = db.Choice
 const User_Choice = db.User_Choice
+const Presentation = db.Presentation
+const Presentation_Group = db.Presentation_Group
 
 // Main work
 
@@ -118,8 +121,34 @@ const deleteSlide = async (req, res) => {
 const getSlideResultForHost = async (req, res) => {
     try {
         const slideId = parseInt(req.params.slideId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
 
         if (!slideId) return res.status(400).json({ message: 'Invalid slide id' })
+        // let presentation_group = null
+        // if (groupId) {
+        //     // Phải dùng findAll khi tìm kiếm quan hệ
+        //     const presentation = await Presentation.findAll({
+        //         where: {
+        //             '$slides.id$': slideId,
+        //         },
+        //         include: [
+        //             {
+        //                 model: Slide,
+        //                 as: 'slides',
+        //                 required: true,
+        //             },
+        //         ],
+        //     })
+
+        //     if (presentation[0]) {
+        //         presentation_group = await Presentation_Group.findOne({
+        //             where: {
+        //                 presentation_id: presentation[0].dataValues.id,
+        //                 group_id: groupId,
+        //             },
+        //         })
+        //     }
+        // }
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
@@ -142,6 +171,10 @@ const getSlideResultForHost = async (req, res) => {
                 include: {
                     model: User_Choice,
                     as: 'user_choices',
+                    attributes: ['id', 'choice_id', 'created_at'],
+                    where: {
+                        presentation_group_id: presentationGroupId ? presentationGroupId : null,
+                    },
                     required: false,
                     include: {
                         model: User,
@@ -162,11 +195,37 @@ const getSlideResultForHost = async (req, res) => {
 const getSlideResultForMember = async (req, res) => {
     try {
         const slideId = parseInt(req.params.slideId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
         const memberId = req.query.memberId
 
         if (!(slideId && memberId))
             return res.status(400).json({ message: 'Invalid slide id or member id' })
 
+        // let presentation_group = null
+        // if (groupId) {
+        //     // Phải dùng findAll khi tìm kiếm quan hệ
+        //     const presentation = await Presentation.findAll({
+        //         where: {
+        //             '$slides.id$': slideId,
+        //         },
+        //         include: [
+        //             {
+        //                 model: Slide,
+        //                 as: 'slides',
+        //                 required: true,
+        //             },
+        //         ],
+        //     })
+
+        //     if (presentation[0]) {
+        //         presentation_group = await Presentation_Group.findOne({
+        //             where: {
+        //                 presentation_id: presentation[0].dataValues.id,
+        //                 group_id: groupId,
+        //             },
+        //         })
+        //     }
+        // }
         const slideResult = await Slide.findByPk(slideId, {
             include: {
                 model: Choice,
@@ -178,7 +237,10 @@ const getSlideResultForMember = async (req, res) => {
                                 SELECT COUNT(*)
                                 FROM user_choice
                                 WHERE
-                                    user_choice.choice_id = choices.id
+                                    user_choice.choice_id = choices.id and
+                                    presentation_group_id = ${
+                                        presentationGroupId ? presentationGroupId : null
+                                    }
                             )`),
                             'n_choices',
                         ],
@@ -187,10 +249,12 @@ const getSlideResultForMember = async (req, res) => {
                 include: {
                     model: User_Choice,
                     as: 'user_choices',
-                    required: false,
+                    attributes: ['id', 'choice_id'],
                     where: {
+                        presentation_group_id: presentationGroupId ? presentationGroupId : null,
                         member_id: memberId,
                     },
+                    required: false,
                 },
             },
         })

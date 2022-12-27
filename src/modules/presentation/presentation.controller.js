@@ -3,7 +3,7 @@ const db = require('#common/database/index.js')
 const Presentation = db.Presentation
 const Presentation_Group = db.Presentation_Group
 const Slide = db.Slide
-const User = db.User
+const Group = db.Group
 const Choice = db.Choice
 const User_Choice = db.User_Choice
 const User_Group = db.User_Group
@@ -69,7 +69,7 @@ const getPresentationById = async (req, res) => {
 const getPresentationForHostById = async (req, res) => {
     try {
         const presentationId = parseInt(req.params?.presentationId)
-        const groupId = parseInt(req.query?.groupId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
         const userId = parseInt(req?.user?.id)
 
         if (!(presentationId && userId)) return res.status(400)
@@ -83,7 +83,7 @@ const getPresentationForHostById = async (req, res) => {
             },
         })
 
-        // Check permission
+        //#region Check permission
         presentation.dataValues.permission = {
             isAllowed: false,
         }
@@ -91,10 +91,22 @@ const getPresentationForHostById = async (req, res) => {
             presentation.dataValues.permission.isAllowed = true
         } else {
             // Check permission for presenting in group
-            if (groupId) {
+            if (presentationGroupId) {
+                const group = await Group.findAll({
+                    where: {
+                        '$presentation_groups.id$': presentationGroupId,
+                    },
+                    include: [
+                        {
+                            model: Presentation_Group,
+                            as: 'presentation_groups',
+                            required: true,
+                        },
+                    ],
+                })
                 const co_owners = await User_Group.findAll({
                     where: {
-                        group_id: groupId,
+                        group_id: group[0].dataValues.id,
                         role_id: 2,
                     },
                     attributes: ['id', 'user_id'],
@@ -111,6 +123,7 @@ const getPresentationForHostById = async (req, res) => {
                 presentation.dataValues.permission.message = 'You are not host of this presentation'
             }
         }
+        //#endregion
 
         return res.status(200).json({ data: presentation })
     } catch (error) {
@@ -122,43 +135,66 @@ const getPresentationForHostById = async (req, res) => {
 const getPresentationForMemberById = async (req, res) => {
     try {
         const presentationId = parseInt(req.params?.presentationId)
-        const groupId = parseInt(req.query?.groupId)
-        const userId = parseInt(req?.user?.id)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        const userId = parseInt(req.query?.userId)
 
         if (!presentationId) return res.status(400)
 
-        const presentation = await Presentation.findByPk(presentationId, {
-            attributes: ['id', 'owner_id', 'code'],
-            include: {
-                model: Slide,
-                as: 'slides',
-                attributes: ['id', 'type'],
-            },
-        })
-
-        // Check permission
-        presentation.dataValues.permission = {
+        //#region Check permission
+        const permission = {
             isAllowed: false,
         }
         // Check permission for presenting in group
-        if (groupId) {
-            const user = await User_Group.findOne({
-                where: {
-                    group_id: groupId,
-                },
-                attributes: ['id', 'user_id'],
-            })
-            if (user?.dataValues?.id === userId) {
-                presentation.dataValues.permission.isAllowed = true
+        if (presentationGroupId) {
+            if (!userId) {
+                permission.message = 'You must be a member in group to access this presentation'
             } else {
-                presentation.dataValues.permission.message =
-                    'You are not a member of this presentation'
+                // Phải dùng findAll khi tìm kiếm quan hệ
+                const group = await Group.findAll({
+                    where: {
+                        '$presentation_groups.id$': presentationGroupId,
+                    },
+                    include: [
+                        {
+                            model: Presentation_Group,
+                            as: 'presentation_groups',
+                            required: true,
+                        },
+                    ],
+                })
+                const user = await User_Group.findOne({
+                    where: {
+                        group_id: group[0].dataValues.id,
+                        user_id: userId,
+                    },
+                    attributes: ['id', 'user_id'],
+                })
+                if (user?.dataValues?.id) {
+                    permission.isAllowed = true
+                } else {
+                    permission.message = 'You are not a member of this presentation'
+                }
             }
         } else {
-            presentation.dataValues.permission.isAllowed = true
+            permission.isAllowed = true
         }
+        //#endregion
 
-        return res.status(200).json({ data: presentation })
+        if (permission.isAllowed === false) {
+            return res.status(200).json({ data: { permission } })
+        } else {
+            const presentation = await Presentation.findByPk(presentationId, {
+                attributes: ['id', 'owner_id', 'code'],
+                include: {
+                    model: Slide,
+                    as: 'slides',
+                    attributes: ['id', 'type'],
+                },
+            })
+            presentation.dataValues.permission = permission
+
+            return res.status(200).json({ data: presentation })
+        }
     } catch (error) {
         console.log('🚀 ~ error', error)
         return res.status(500).json({ message: 'Internal Server Error' })

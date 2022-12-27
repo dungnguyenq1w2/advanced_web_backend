@@ -42,10 +42,16 @@ const getAllGroup = async (req, res) => {
 const getGroup = async (req, res) => {
     try {
         const id = parseInt(req.params.id)
+        const userid = parseInt(req.user.id)
+
         const isGroup = await Group.findOne({
             where: { id: id },
         })
-        if (!isGroup) return res.status(404).json({ status: 404, message: "Group doesn't existed" })
+        const isUserInGroup = await User_Group.findOne({
+            where: { user_id: userid },
+        })
+        if (!isGroup || !isUserInGroup)
+            return res.status(404).json({ status: 404, message: "Group doesn't existed" })
         const group = await Group.findByPk(id, {
             include: {
                 model: User_Group,
