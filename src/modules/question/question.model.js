@@ -15,12 +15,16 @@ module.exports = (Sequelize, DataTypes) => {
                 defaultValue: false,
             },
             user_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
+                type: DataTypes.STRING,
+                allowNull: true,
             },
             presentation_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+            },
+            presentation_group_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
             },
             created_at: {
                 type: 'TIMESTAMP',
@@ -38,11 +42,17 @@ module.exports = (Sequelize, DataTypes) => {
         Question.belongsTo(models.User, {
             foreignKey: 'user_id',
             as: 'user',
+            constraints: false,
         })
         // Associate Presentation(1) - Question(*)
         Question.belongsTo(models.Presentation, {
             foreignKey: 'presentation_id',
             as: 'presentation',
+        })
+        // Associate Presentation_Group(1) - Question(*)
+        Question.belongsTo(models.Presentation_Group, {
+            foreignKey: 'presentation_group_id',
+            as: 'presentation_group',
         })
         // Associate Question(1) - Answer(*)
         Question.hasMany(models.Answer, {

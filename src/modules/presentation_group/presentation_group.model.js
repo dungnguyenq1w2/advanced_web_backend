@@ -32,6 +32,16 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'presentation_group_id',
             as: 'presentation_group_choices',
         })
+        // Associate Presentation_Group(1) - Message(*)
+        Presentation_Group.hasMany(models.User_Choice, {
+            foreignKey: 'presentation_group_id',
+            as: 'presentation_group_messages',
+        })
+        // Associate Presentation_Group(1) - Question(*)
+        Presentation_Group.hasMany(models.Question, {
+            foreignKey: 'presentation_group_id',
+            as: 'presentation_group_questions',
+        })
     }
     return Presentation_Group
 }

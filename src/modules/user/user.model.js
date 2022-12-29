@@ -68,11 +68,13 @@ module.exports = (Sequelize, DataTypes) => {
         User.hasMany(models.Message, {
             foreignKey: 'user_id',
             as: 'messages',
+            constraints: false,
         })
         // Associate User(1) - Question(*)
         User.hasMany(models.Question, {
             foreignKey: 'user_id',
             as: 'questions',
+            constraints: false,
         })
         // Associate User(1) - Vote(*)
         User.hasMany(models.Vote, {
