@@ -31,6 +31,23 @@ const getAllMessages = async (req, res) => {
     }
 }
 
+const addMessage = async (req, res) => {
+    try {
+        const userId = parseInt(req.user.id)
+
+        const newMessage = { ...req.body, user_id: userId }
+
+        const result = await Message.create(newMessage)
+        if (result) {
+            return res.status(201).json({ data: result })
+        }
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllMessages,
+    addMessage,
 }

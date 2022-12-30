@@ -3,5 +3,17 @@
 
 ###
 # @name getAllMessages
-POST {{baseUrl}}/messages?presentationId=5&presentationGroupId=4
+GET {{baseUrl}}/messages?presentationId=5&presentationGroupId=4
 Authorization: Bearer {{token}}
+
+###
+# @name addMessage
+POST {{baseUrl}}/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "content":"test test",
+    "presentation_id": 5,
+    "presentation_group_id": 4
+}

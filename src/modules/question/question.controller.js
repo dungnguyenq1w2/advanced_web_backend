@@ -45,6 +45,22 @@ const getAllQuestions = async (req, res) => {
     }
 }
 
+const addQuestion = async (req, res) => {
+    try {
+        const userId = parseInt(req.user.id)
+
+        const newQuestion = { ...req.body, user_id: userId }
+
+        const result = await Question.create(newQuestion)
+        if (result) {
+            return res.status(201).json({ data: result })
+        }
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
 module.exports = {
     getAllQuestions,
+    addQuestion,
 }

@@ -6,4 +6,6 @@ const router = Router()
 
 router.get('/', authMiddleware.authenticateToken, questionController.getAllQuestions)
 
+router.post('/', authMiddleware.authenticateToken, questionController.addQuestion)
+
 module.exports = router
