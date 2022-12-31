@@ -25,6 +25,7 @@ const answerApi = require('#modules/answer/answer.api.js')
 
 const { hostSocket, memberSocket } = require('./src/common/socket')
 const slideSocket = require('#modules/slide/slide.socket.js')
+const socketConnection = require('./src/common/socket')
 
 const app = express()
 
@@ -80,29 +81,7 @@ app.get('/', (req, res) => {
 //#endregion
 
 //#region Socket
-// Host socket
-io.of('/host').on('connection', (socket) => {
-    // console.log('Host connected')
-    // Subscribe Slide room
-    hostSocket.hostJoinSlideRoom(io, socket)
-
-    // Unsubscribe Slide room
-    hostSocket.hostLeaveSlideRoom(io, socket)
-
-    slideSocket(io, socket)
-})
-
-// Member socket
-io.of('/member').on('connection', (socket) => {
-    // console.log('Member connected')
-    // Subscribe Slide room
-    memberSocket.memberJoinSlideRoom(io, socket)
-
-    // Unsubscribe Slide room
-    memberSocket.memberLeaveSlideRoom(io, socket)
-
-    slideSocket(io, socket)
-})
+socketConnection(io)
 //#endregion
 
 httpsServer.listen(process.env.PORT || 5000, function () {
