@@ -22,6 +22,11 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'group_id',
             as: 'group',
         })
+        // Associate User_Group(1) - Presentation_Group(*)
+        Presentation_Group.belongsTo(models.User_Group, {
+            foreignKey: 'group_id',
+            as: 'user_group',
+        })
         // Associate Presentation(1) - Presentation_Group(*)
         Presentation_Group.belongsTo(models.Presentation, {
             foreignKey: 'presentation_id',

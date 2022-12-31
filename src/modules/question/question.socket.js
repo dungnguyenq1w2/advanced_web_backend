@@ -2,6 +2,10 @@ const db = require('#common/database/index.js')
 
 const Question = db.Question
 const Answer = db.Answer
+const Group = db.Group
+const Presentation = db.Presentation
+const Notification = db.Notification
+const Presentation_Group = db.Presentation_Group
 
 const joinQuestionRoom = (io, socket) => {
     //:JOIN:Client Supplied Room
@@ -56,6 +60,51 @@ const control = (io, socket) => {
                     question.id = res.id
                 }
             }
+
+            let noti = null
+            const presentation = await Presentation.findByPk(presentationId)
+            if (presentationGroupId) {
+                const presentationGroup = await Presentation_Group.findByPk(presentationGroupId, {
+                    include: { model: Group, as: 'group', attribute: ['id', 'name'] },
+                })
+                if (presentation && presentationGroup) {
+                    noti = {
+                        user_id: question.user.id,
+                        content: `${question.user.name} ${
+                            question.isAnswer ? 'answer your question of' : 'post a new question to'
+                        } ${presentation.name} in ${presentationGroup.group.name}`,
+                        link: `/group/${presentationGroup.group.id}?id=${presentationGroupId}`,
+                        is_read: false,
+                        created_at: new Date(),
+                    }
+                }
+            } else if (presentation) {
+                {
+                    noti = {
+                        user_id: question.user.id,
+                        content: `${question.user.name} ${
+                            question.isAnswer ? 'answer your question of' : 'post a new question to'
+                        } ${presentation.name}`,
+                        link: `/presentation-slide/${presentationId}`,
+                        is_read: false,
+                        created_at: new Date(),
+                    }
+                }
+            }
+            const newNoti = {
+                ...noti,
+                user_id: question.user.id,
+                is_read: false,
+                created_at: new Date(),
+                userAnsweredId: question?.userAnsweredId ?? null,
+            }
+
+            io.of('/notification')
+                .to(`notification-${presentationId}-${presentationGroupId}`)
+                .emit('server-send-question-noti', newNoti)
+
+            // delete newNoti.userAnsweredId
+            // await Notification.create(newNoti)
 
             io.of('/question')
                 .to(`question-${presentationId}-${presentationGroupId}`)

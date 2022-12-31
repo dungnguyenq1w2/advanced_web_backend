@@ -1,6 +1,7 @@
 const slideSocket = require('#modules/slide/slide.socket.js')
 const messageSocket = require('#modules/message/message.socket.js')
 const questionSocket = require('#modules/question/question.socket.js')
+const notificationSocket = require('#modules/notification/notification.socket.js')
 
 const socketConnection = (io) => {
     // Slide_Host socket
@@ -47,6 +48,17 @@ const socketConnection = (io) => {
         questionSocket.leaveQuestionRoom(io, socket)
 
         questionSocket.control(io, socket)
+    })
+
+    // Notification socket
+    io.of('/notification').on('connection', (socket) => {
+        // Subscribe Notification room
+        notificationSocket.joinNotificationRoom(io, socket)
+
+        // Unsubscribe Notification room
+        notificationSocket.leaveNotificationRoom(io, socket)
+
+        notificationSocket.control(io, socket)
     })
 }
 
