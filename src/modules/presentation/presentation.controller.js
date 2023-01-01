@@ -230,7 +230,7 @@ const addPresentation = async (req, res) => {
             while (code.length < 8) code = '0' + code
         } while (codes.includes(code))
 
-        const presentation = await Presentation.create({ host_id: hostId, code: code, name: name })
+        const presentation = await Presentation.create({ owner_id: hostId, code: code, name: name })
 
         return res.status(200).json({ data: presentation })
     } catch (error) {

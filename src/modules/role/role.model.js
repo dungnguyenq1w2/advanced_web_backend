@@ -12,6 +12,15 @@ module.exports = (Sequelize, DataTypes) => {
             tableName: 'role',
         }
     )
+
+    Role.associate = (models) => {
+        // Associate Role(1) - User_Group(*)
+        Role.hasMany(models.User_Group, {
+            foreignKey: 'role_id',
+            as: 'roles',
+        })
+    }
+
     Role.bulkCreate(
         [
             { name: 'Owner', id: 1 },
@@ -20,15 +29,9 @@ module.exports = (Sequelize, DataTypes) => {
         ],
         {
             ignoreDuplicates: true,
+            returning: true,
         }
     )
-    Role.associate = (models) => {
-        // Associate Role(1) - User_Group(*)
-        Role.hasMany(models.User_Group, {
-            foreignKey: 'role_id',
-            as: 'roles',
-        })
-    }
 
     return Role
 }
