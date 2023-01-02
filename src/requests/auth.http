@@ -40,3 +40,22 @@ Content-Type: application/json
    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6Ik5ndXnhu4VuIFThuqVuIETFqW5nIiwiaWF0IjoxNjY3MjMwOTgzLCJleHAiOjE2NjcyMzA5ODh9.JscG57JevEBOpFkKn7MqepsuTTakMMWQZY2tBo91vfM"
 }
 
+###
+# @name sendMailIdentify
+POST {{baseUrl}}/auth/identify
+Content-Type: application/json
+
+{
+   "email": "hoduy220@gmail.com"
+}
+
+###
+# @name resetPassword
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+   "newPassword": "123456",
+   "confirmPassword": "123456",
+   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJob2R1eTIyMEBnbWFpbC5jb20iLCJpYXQiOjE2NzI2NTQwNDQsImV4cCI6MTY3MjY1NDE2NH0.nGwLUFwAvD9rb5yGokbPN0iRZQ2nqjxXCXQpILJMOac"
+}

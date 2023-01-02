@@ -10,10 +10,26 @@ const generateAccessToken = async (user) => {
     delete user.iat
     try {
         const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-            expiresIn: '7d',
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
         })
 
         return Promise.resolve(accessToken)
+    } catch (err) {
+        console.log('🚀 ~ err', err)
+        return Promise.reject(err)
+    }
+}
+
+// Generate only reset password token
+const generateResetPasswordToken = async (user) => {
+    delete user.exp
+    delete user.iat
+    try {
+        const reserPasswordToken = jwt.sign(user, process.env.RESET_PASSWORD_TOKEN_SECRET, {
+            expiresIn: '15m', //900
+        })
+
+        return Promise.resolve(reserPasswordToken)
     } catch (err) {
         console.log('🚀 ~ err', err)
         return Promise.reject(err)
@@ -52,4 +68,9 @@ const verifyRefreshToken = (refreshToken) => {
     })
 }
 
-module.exports = { generateAccessToken, generateTokens, verifyRefreshToken }
+module.exports = {
+    generateAccessToken,
+    generateTokens,
+    verifyRefreshToken,
+    generateResetPasswordToken,
+}

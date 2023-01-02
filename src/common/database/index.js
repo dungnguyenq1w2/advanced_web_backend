@@ -38,6 +38,8 @@ const Group = require('#modules/group/group.model.js')
 const User_Group = require('#modules/user_group/user_group.model.js')
 const Role = require('#modules/role/role.model.js')
 
+const Blacklist_Token = require('#modules/blacklist_token/blacklist_token.model.js')
+
 const Presentation = require('#modules/presentation/presentation.model.js')
 const Presentation_Group = require('#modules/presentation_group/presentation_group.model.js')
 const Slide = require('#modules/slide/slide.model.js')
@@ -57,6 +59,8 @@ db.User = User(sequelize, DataTypes)
 db.Group = Group(sequelize, DataTypes)
 db.User_Group = User_Group(sequelize, DataTypes)
 db.Role = Role(sequelize, DataTypes)
+
+db.Blacklist_Token = Blacklist_Token(sequelize, DataTypes)
 
 db.Presentation = Presentation(sequelize, DataTypes)
 db.Presentation_Group = Presentation_Group(sequelize, DataTypes)

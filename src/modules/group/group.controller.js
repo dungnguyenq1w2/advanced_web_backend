@@ -3,7 +3,6 @@ const db = require('#common/database/index.js')
 const bcrypt = require('bcrypt')
 
 const mailer = require('#root/utils/mailer.js')
-const { htmlContent } = require('#common/config/mail.config.js')
 const { htmlContentInviteGroup } = require('#common/config/mail.config.js')
 const { encryptString, decryptString } = require('#root/utils/crypto.js')
 

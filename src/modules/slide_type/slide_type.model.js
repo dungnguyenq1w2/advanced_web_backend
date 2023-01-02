@@ -12,6 +12,7 @@ module.exports = (Sequelize, DataTypes) => {
             tableName: 'slide_type',
         }
     )
+
     Slide_Type.bulkCreate(
         [
             { name: 'Heading', id: 1 },
@@ -20,8 +21,11 @@ module.exports = (Sequelize, DataTypes) => {
         ],
         {
             ignoreDuplicates: true,
+            returning: true,
+            validate: true,
         }
     )
+
     Slide_Type.associate = (models) => {
         // Associate Slide_Type(1) - Slide(*)
         Slide_Type.hasMany(models.Slide, {
