@@ -1,4 +1,5 @@
 const db = require('#common/database/index.js')
+const { Op, where } = require('sequelize')
 // Create main Model
 const Presentation = db.Presentation
 const Presentation_Group = db.Presentation_Group
@@ -13,11 +14,42 @@ const User_Group = db.User_Group
 const getAllPresentaionOfOneUser = async (req, res) => {
     try {
         const userId = req.user.id
+        if (!userId) return res.status(400).json({ message: 'Invalid user id' })
+
+        //id: { [Op.col]: 'Presentation_Group.id' },
         const presentations = await Presentation.findAll({
-            where: {
-                owner_id: userId,
+            include: {
+                model: Presentation_Group,
+                as: 'presentation_groups',
+                required: false,
+                attributes: [],
+                // raw: true,
+                include: {
+                    model: Group,
+                    as: 'group',
+                    attributes: [],
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                        attributes: [],
+                        // raw: true,
+                    },
+                },
             },
+            where: {
+                [Op.or]: [
+                    { owner_id: userId },
+                    {
+                        [Op.and]: [
+                            { '$presentation_groups.group.participants.user_id$': userId },
+                            { '$presentation_groups.group.participants.role_id$': 2 },
+                        ],
+                    },
+                ],
+            },
+            raw: true,
         })
+
         return res.status(200).json({ data: presentations })
     } catch (error) {
         console.log(error)

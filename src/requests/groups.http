@@ -60,5 +60,5 @@ Content-Type: application/json
 ###
 # @name deleteGroupById
 DELETE {{baseUrl}}/groups/1
-#Authorization: Bearer {{token}}
+Authorization: Bearer {{token}}
 Content-Type: application/json

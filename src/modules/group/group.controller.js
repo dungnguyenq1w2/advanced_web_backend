@@ -120,7 +120,7 @@ const deleteGroup = async (req, res) => {
         const group = (
             await Group.findByPk(id, {
                 attributes: ['id'],
-                //raw: true, : Không hỗ trợ khi dùng include
+                //raw: true, : Không hỗ trợ khi dùng include khi sử dụng raw: true ở trong include con
                 nest: true,
                 include: [
                     {
