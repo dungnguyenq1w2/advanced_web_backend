@@ -74,7 +74,7 @@ const joinPublicPresentationNotificationRoom = (io, socket) => {
 
             const room = `notification-${presentationId}-null`
             socket.join(room)
-            console.log('🚀 ~ socket', socket.id)
+            // console.log('🚀 ~ socket', socket.id)
             console.log('[socket]', 'join room :', room)
         } catch (e) {
             console.log('[error]', 'join room :', e)
@@ -89,8 +89,10 @@ const leavePublicPresentationNotificationRoom = (io, socket) => {
         try {
             // const room = `message-${presentationId}-${presentationGroupId}`
             // console.log('[socket]', 'leave room :', room)
+
+            const room = `notification-${presentationId}-null`
             console.log('[socket]', 'disconnect :')
-            // socket.leave(room)
+            socket.leave(room)
             socket.disconnect()
         } catch (e) {
             console.log('[error]', 'leave room :', e)

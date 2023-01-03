@@ -237,12 +237,9 @@ const getSlideResultForMember = async (req, res) => {
                                 SELECT COUNT(*)
                                 FROM user_choice
                                 WHERE
-                                    user_choice.choice_id = choices.id 
-                                   ${
-                                       presentationGroupId
-                                           ? `and presentation_group_id = ${presentationGroupId}`
-                                           : ''
-                                   } 
+                                    user_choice.choice_id = choices.id and presentation_group_id ${
+                                        presentationGroupId ? `= ${presentationGroupId}` : 'is null'
+                                    } 
                             )`),
                             'n_choices',
                         ],

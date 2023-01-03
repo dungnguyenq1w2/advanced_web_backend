@@ -41,11 +41,7 @@ const control = (io, socket) => {
                 io.of('/message')
                     .to(`message-${presentationId}-${presentationGroupId}`)
                     .emit('server-send-message', message)
-                const sockets = await io.of('/notification').fetchSockets()
-                console.log(
-                    '🚀 ~ sockets',
-                    sockets.map((e) => e.id)
-                )
+
                 let noti = null
                 const presentation = await Presentation.findByPk(presentationId)
                 if (presentationGroupId) {
@@ -74,11 +70,6 @@ const control = (io, socket) => {
                     created_at: new Date(),
                 }
 
-                console.log('🚀 ~ newNoti', newNoti)
-                console.log(
-                    '🚀 ~ `notification-${presentationId}-${presentationGroupId}`',
-                    `notification-${presentationId}-${presentationGroupId}`
-                )
                 io.of('/notification')
                     .to(`notification-${presentationId}-${presentationGroupId}`)
                     .emit('server-send-message-noti', newNoti)
