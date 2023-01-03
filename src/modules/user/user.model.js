@@ -27,10 +27,6 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },
-            token_limit_time: {
-                type: 'TIMESTAMP',
-                allowNull: true,
-            },
             refresh_token: {
                 type: DataTypes.TEXT,
                 // type: DataTypes.STRING,

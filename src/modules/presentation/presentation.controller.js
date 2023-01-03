@@ -51,7 +51,7 @@ const getAllPresentaionOfGroup = async (req, res) => {
 const getPresentationById = async (req, res) => {
     try {
         const { presentationId } = req.params
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
         const presentation = await Presentation.findOne({
             where: { id: presentationId },
@@ -72,7 +72,7 @@ const getPresentationForHostById = async (req, res) => {
         const presentationGroupId = parseInt(req.query?.presentationGroupId)
         const userId = parseInt(req?.user?.id)
 
-        if (!(presentationId && userId)) return res.status(400)
+        if (!(presentationId && userId)) return res.status(400).json({ message: 'Invalid params' })
 
         const presentation = await Presentation.findByPk(presentationId, {
             attributes: ['id', 'owner_id', 'code'],
@@ -138,7 +138,7 @@ const getPresentationForMemberById = async (req, res) => {
         const presentationGroupId = parseInt(req.query?.presentationGroupId)
         const userId = parseInt(req.query?.userId)
 
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
         //#region Check permission
         const permission = {
@@ -204,7 +204,7 @@ const getPresentationForMemberById = async (req, res) => {
 const checkCode = async (req, res) => {
     try {
         const { code } = req.body
-        if (!code) return res.status(400)
+        if (!code) return res.status(400).json({ data: { status: false } })
 
         const presentation = await Presentation.findOne({ where: { code: code }, raw: true })
         if (presentation) return res.status(200).json({ data: presentation })
@@ -218,7 +218,7 @@ const checkCode = async (req, res) => {
 const addPresentation = async (req, res) => {
     try {
         const { hostId, name } = req.body
-        if (!hostId || !name) return res.status(400)
+        if (!hostId || !name) return res.status(400).json()
 
         const codes = await Presentation.findAll({
             attributes: ['code'],
@@ -242,7 +242,7 @@ const addPresentation = async (req, res) => {
 const deletePresentationById = async (req, res) => {
     try {
         const presentationId = parseInt(req.params.presentationId)
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json()
 
         const presentation = await Presentation.findByPk(presentationId, {
             attributes: ['id'],
@@ -301,7 +301,7 @@ const deletePresentationById = async (req, res) => {
 const updatePresentationName = async (req, res) => {
     try {
         const { presentationId, name } = req.body
-        if (!presentationId || !name) return res.status(400)
+        if (!presentationId || !name) return res.status(400).json()
 
         const [row] = await Presentation.update({ name: name }, { where: { id: presentationId } })
         if (row > 0) return res.status(200).json({ data: name })
@@ -315,7 +315,7 @@ const updatePresentationName = async (req, res) => {
 const createPresentationCode = async (req, res) => {
     try {
         const presentationId = parseInt(req.params.presentationId)
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json()
 
         const codes = await Presentation.findAll({
             attributes: ['code'],
@@ -330,7 +330,7 @@ const createPresentationCode = async (req, res) => {
         const [row] = await Presentation.update({ code: code }, { where: { id: presentationId } })
 
         if (row > 0) return res.status(200).json({ data: code })
-        return res.status(400)
+        return res.status(400).json()
     } catch (error) {
         console.log('Error createPresentationCode: ', error)
         return res.status(500).json({ message: 'Internal Server Error' })
