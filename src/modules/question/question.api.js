@@ -4,7 +4,7 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
-router.get('/', authMiddleware.authenticateToken, questionController.getAllQuestions)
+router.get('/', questionController.getAllQuestions)
 
 router.post('/', authMiddleware.authenticateToken, questionController.addQuestion)
 

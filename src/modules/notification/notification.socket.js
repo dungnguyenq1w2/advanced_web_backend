@@ -26,14 +26,17 @@ const joinNotificationRoom = (io, socket) => {
                         model: Presentation_Group,
                         as: 'presentation_groups',
                         attributes: ['id', 'presentation_id'],
+                        require: true,
                     },
                 },
                 raw: true,
             })
             for (const userGroup of userGroups) {
-                const room = `notification-${userGroup['group.presentation_groups.presentation_id']}-${userGroup['group.presentation_groups.id']}`
-                // console.log('[socket]', 'join room :', room)
-                socket.join(room)
+                if (userGroup['group.presentation_groups.presentation_id']) {
+                    const room = `notification-${userGroup['group.presentation_groups.presentation_id']}-${userGroup['group.presentation_groups.id']}`
+                    // console.log('[socket]', 'join room :', room)
+                    socket.join(room)
+                }
             }
 
             // const sockets = await io.of('/notification').fetchSockets()
@@ -49,6 +52,40 @@ const joinNotificationRoom = (io, socket) => {
 const leaveNotificationRoom = (io, socket) => {
     //:LEAVE:Client Supplied Room
     socket.on('unsubscribe', async function (userId) {
+        try {
+            // const room = `message-${presentationId}-${presentationGroupId}`
+            // console.log('[socket]', 'leave room :', room)
+            console.log('[socket]', 'disconnect :')
+            // socket.leave(room)
+            socket.disconnect()
+        } catch (e) {
+            console.log('[error]', 'leave room :', e)
+            socket.emit('error', 'couldnt perform requested action')
+        }
+    })
+}
+
+const joinPublicPresentationNotificationRoom = (io, socket) => {
+    //:JOIN:Client Supplied Room
+    socket.on('subscribe-presentation', async function (presentationId) {
+        try {
+            presentationId = parseInt(presentationId)
+            if (!presentationId) return
+
+            const room = `notification-${presentationId}-null`
+            socket.join(room)
+            console.log('🚀 ~ socket', socket.id)
+            console.log('[socket]', 'join room :', room)
+        } catch (e) {
+            console.log('[error]', 'join room :', e)
+            socket.emit('error', 'couldnt perform requested action')
+        }
+    })
+}
+
+const leavePublicPresentationNotificationRoom = (io, socket) => {
+    //:LEAVE:Client Supplied Room
+    socket.on('unsubscribe-presentation', async function (presentationId) {
         try {
             // const room = `message-${presentationId}-${presentationGroupId}`
             // console.log('[socket]', 'leave room :', room)
@@ -80,4 +117,10 @@ const control = (io, socket) => {
     // )
 }
 
-module.exports = { joinNotificationRoom, leaveNotificationRoom, control }
+module.exports = {
+    joinNotificationRoom,
+    leaveNotificationRoom,
+    joinPublicPresentationNotificationRoom,
+    leavePublicPresentationNotificationRoom,
+    control,
+}

@@ -15,7 +15,7 @@ const getAllQuestions = async (req, res) => {
         if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
         const questions = await Question.findAll({
-            attributes: ['id', 'content', 'vote', 'is_marked', 'created_at'],
+            attributes: ['id', 'content', 'vote', 'is_marked', 'user_id', 'created_at'],
             where: {
                 presentation_id: presentationId,
                 presentation_group_id: presentationGroupId ? presentationGroupId : null,
