@@ -1,4 +1,5 @@
 @baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
 
 ###
 # @name getUser
@@ -7,6 +8,7 @@ GET {{baseUrl}}/users/1
 ###
 # @name update
 PUT {{baseUrl}}/users/2
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

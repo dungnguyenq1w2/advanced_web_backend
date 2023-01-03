@@ -1,19 +1,20 @@
 @baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
 
 ###
 # @name getGroup
 GET {{baseUrl}}/groups/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IkTFqW5nIDEiLCJpbWFnZSI6IiIsImVtYWlsIjoiZHVuZzFAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjY5MTAyMjA5LCJleHAiOjE2NjkxMDU4MDl9.COwnm7pQnYyE4VQVjJMzMPdl0UnpcWjxau8qOtOMTpA
+Authorization: Bearer {{token}}
 
 ###
 # @name getAllGroups
 GET {{baseUrl}}/groups
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwOTc4MDEsImV4cCI6MTY2OTEwMTQwMX0.AinRq0QHzy0GzO5pKUf8NY8TsatY3sdZFPVxR2dzaBw
+Authorization: Bearer {{token}}
 
 ###
 # @name promoteParticipant
 PUT {{baseUrl}}/groups/1/promote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -23,7 +24,7 @@ Content-Type: application/json
 ###
 # @name demoteParticipant
 PUT {{baseUrl}}/groups/1/demote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwODM2NDUsImV4cCI6MTY2OTA4NzI0NX0.3hsWYK5NZelZ-YmPnWEE-ZXjtb6k7rivAdN0JvVaPj4
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -33,7 +34,7 @@ Content-Type: application/json
 ###
 # @name kickOutParticipant
 DELETE {{baseUrl}}/groups/13/kick-out
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJExaluZyBOZ3V54buFbiIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkxMDk4NzksImV4cCI6MTY2OTExMzQ3OX0.66sEqTi3wpNNt7_wEhTBm0sqxdx-QUrrL9NMjVCiE9g
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -43,15 +44,21 @@ Content-Type: application/json
 ###
 # @name inviteParticipantByLink
 POST {{baseUrl}}/groups/2/invite
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibmFtZSI6IkzDqiBOZ-G7jWMgRHUiLCJpbWFnZSI6IiIsImVtYWlsIjoibGVuZ29jZHUxMjM2NTR0bEBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkwOTc4MDEsImV4cCI6MTY2OTEwMTQwMX0.AinRq0QHzy0GzO5pKUf8NY8TsatY3sdZFPVxR2dzaBw
+Authorization: Bearer {{token}}
 
 ###
 # @name inviteParticipantByEmail
 POST {{baseUrl}}/groups/1/invite-email
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJExaluZyBOZ3V54buFbiIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NjkxMDgwNzAsImV4cCI6MTY2OTExMTY3MH0.sjAaJQzq5A0TpqqUZCRAciqyhkwmKPV4uVPl7ewrUp8
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
     "email": "dungnguyenq1w2@gmail.com",
     "token": "$2b$10$EcfaRBPWHkWnU9Pp3IQ3Z.vwMVkbYBGg8UFbQc3jFv72glX01jchi"
 }
+
+###
+# @name deleteGroupById
+DELETE {{baseUrl}}/groups/1
+#Authorization: Bearer {{token}}
+Content-Type: application/json

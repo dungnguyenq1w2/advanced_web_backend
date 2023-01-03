@@ -28,10 +28,10 @@ module.exports = (Sequelize, DataTypes) => {
             as: 'participants',
         })
         // Associate Group(1) - Presentation(*)
-        Group.hasMany(models.Presentation, {
-            foreignKey: 'group_id',
-            as: 'presentations',
-        })
+        // Group.hasMany(models.Presentation, {
+        //     foreignKey: 'group_id',
+        //     as: 'presentations',
+        // })
         // Associate Group(1) - Presentation_Group(*)
         Group.hasMany(models.Presentation_Group, {
             foreignKey: 'group_id',

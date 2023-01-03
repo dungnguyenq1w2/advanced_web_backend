@@ -9,6 +9,7 @@ Authorization: Bearer {{token}}
 ###
 # @name addPresentation
 POST {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
