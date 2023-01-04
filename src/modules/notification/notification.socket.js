@@ -33,11 +33,8 @@ const joinNotificationRoom = (io, socket) => {
 
             for (const userGroup of userGroups) {
                 const groupRoom = `notification-group-${userGroup['group.id']}`
-                console.log('🚀 ~ groupRoom', groupRoom)
                 if (userGroup['group.presentation_groups.presentation_id']) {
                     const room = `notification-${userGroup['group.presentation_groups.presentation_id']}`
-                    // console.log('[socket]', 'join room :', room)
-                    console.log('🚀 ~ room', room)
                     socket.join(room)
                 }
                 socket.join(groupRoom)
