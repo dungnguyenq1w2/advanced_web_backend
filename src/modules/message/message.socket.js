@@ -35,8 +35,8 @@ const leaveMessageRoom = (io, socket) => {
 
 const control = (io, socket) => {
     socket.on('client-send-message', async (presentationId, message) => {
-        if (!presentationId) return
         try {
+            if (!presentationId) return
             io.of('/message').to(`message-${presentationId}`).emit('server-send-message', message)
 
             let noti = null
@@ -68,7 +68,7 @@ const control = (io, socket) => {
 
             await Message.create(newMessage)
         } catch (error) {
-            console.log('[error]', 'noti message:', e)
+            console.log('[error]', 'noti message:', error)
         }
     })
 }

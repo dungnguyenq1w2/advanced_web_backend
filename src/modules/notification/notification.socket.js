@@ -1,6 +1,5 @@
 const db = require('#common/database/index.js')
 
-const Notification = db.Notification
 const User_Group = db.User_Group
 const Group = db.Group
 const Presentation_Group = db.Presentation_Group
@@ -31,16 +30,21 @@ const joinNotificationRoom = (io, socket) => {
                 },
                 raw: true,
             })
+
             for (const userGroup of userGroups) {
+                const groupRoom = `notification-group-${userGroup['group.id']}`
+                console.log('🚀 ~ groupRoom', groupRoom)
                 if (userGroup['group.presentation_groups.presentation_id']) {
-                    const room = `notification-${userGroup['group.presentation_groups.presentation_id']}-${userGroup['group.presentation_groups.id']}`
+                    const room = `notification-${userGroup['group.presentation_groups.presentation_id']}`
                     // console.log('[socket]', 'join room :', room)
+                    console.log('🚀 ~ room', room)
                     socket.join(room)
                 }
+                socket.join(groupRoom)
             }
 
-            // const sockets = await io.of('/notification').fetchSockets()
-            // console.log('🚀 ~ sockets', sockets)
+            const sockets = await io.of('/notification').fetchSockets()
+
             // socket.to(room).emit('user joined', socket.id)
         } catch (e) {
             console.log('[error]', 'join room :', e)
@@ -72,10 +76,9 @@ const joinPublicPresentationNotificationRoom = (io, socket) => {
             presentationId = parseInt(presentationId)
             if (!presentationId) return
 
-            const room = `notification-${presentationId}-null`
+            const room = `notification-${presentationId}`
             socket.join(room)
             // console.log('🚀 ~ socket', socket.id)
-            console.log('[socket]', 'join room :', room)
         } catch (e) {
             console.log('[error]', 'join room :', e)
             socket.emit('error', 'couldnt perform requested action')
@@ -90,7 +93,7 @@ const leavePublicPresentationNotificationRoom = (io, socket) => {
             // const room = `message-${presentationId}-${presentationGroupId}`
             // console.log('[socket]', 'leave room :', room)
 
-            const room = `notification-${presentationId}-null`
+            const room = `notification-${presentationId}`
             console.log('[socket]', 'disconnect :')
             socket.leave(room)
             socket.disconnect()
@@ -101,23 +104,7 @@ const leavePublicPresentationNotificationRoom = (io, socket) => {
     })
 }
 
-const control = (io, socket) => {
-    // socket.on(
-    //     'client-send-message',
-    //     async (presentationId, presentationGroupId = null, message) => {
-    //         io.of('/message')
-    //             .to(`message-${presentationId}-${presentationGroupId}`)
-    //             .emit('server-send-message', message)
-    //         const newNotification = {
-    //             content: message.content,
-    //             presentation_id: presentationId,
-    //             presentation_group_id: presentationGroupId,
-    //             user_id: message.user.id,
-    //         }
-    //         await Notification.create(newNotification)
-    //     }
-    // )
-}
+const control = (io, socket) => {}
 
 module.exports = {
     joinNotificationRoom,

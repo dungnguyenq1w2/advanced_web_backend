@@ -26,11 +26,6 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'group_id',
             as: 'group',
         })
-        // Associate User_Group(1) - Presentation_Group(*)
-        Presentation_Group.belongsTo(models.User_Group, {
-            foreignKey: 'group_id',
-            as: 'user_group',
-        })
         // Associate Presentation(1) - Presentation_Group(*)
         Presentation_Group.belongsTo(models.Presentation, {
             foreignKey: 'presentation_id',
@@ -40,16 +35,6 @@ module.exports = (Sequelize, DataTypes) => {
         Presentation_Group.hasMany(models.User_Choice, {
             foreignKey: 'presentation_group_id',
             as: 'presentation_group_choices',
-        })
-        // Associate Presentation_Group(1) - Message(*)
-        Presentation_Group.hasMany(models.User_Choice, {
-            foreignKey: 'presentation_group_id',
-            as: 'presentation_group_messages',
-        })
-        // Associate Presentation_Group(1) - Question(*)
-        Presentation_Group.hasMany(models.Question, {
-            foreignKey: 'presentation_group_id',
-            as: 'presentation_group_questions',
         })
     }
     return Presentation_Group

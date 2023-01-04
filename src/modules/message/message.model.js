@@ -37,11 +37,6 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'presentation_id',
             as: 'presentation',
         })
-        // Associate Presentation_Group(1) - Message(*)
-        Message.belongsTo(models.Presentation_Group, {
-            foreignKey: 'presentation_group_id',
-            as: 'presentation_group',
-        })
     }
     return Message
 }
