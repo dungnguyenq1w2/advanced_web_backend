@@ -8,7 +8,7 @@ router.get('/', authMiddleware.authenticateToken, presentationController.getAllP
 router.get(
     '/group/:groupId',
     authMiddleware.authenticateToken,
-    presentationController.getAllPresentaionOfGroup
+    presentationController.getAllPresentationOfGroup
 )
 router.delete(
     '/:presentationId',
@@ -37,6 +37,12 @@ router.post(
     '/createCode/:presentationId',
     authMiddleware.authenticateToken,
     presentationController.createPresentationCode
+)
+
+router.get(
+    '/group/:groupId/active',
+    // authMiddleware.authenticateToken,
+    presentationController.getActivePresentationsOfGroup
 )
 
 module.exports = router

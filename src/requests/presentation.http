@@ -61,3 +61,8 @@ Content-Type: application/json
 # @name createPresentationCode
 POST {{baseUrl}}/presentations/createCode/3
 Content-Type: application/json
+
+###
+# @name getActivePresentationsOfGroup
+GET {{baseUrl}}/presentations/group/1/active
+# Authorization: Bearer {{token}}

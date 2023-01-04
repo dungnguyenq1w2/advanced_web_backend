@@ -18,6 +18,7 @@ const getAllPresentaionOfOneUser = async (req, res) => {
                 owner_id: userId,
             },
         })
+
         return res.status(200).json({ data: presentations })
     } catch (error) {
         console.log(error)
@@ -25,7 +26,7 @@ const getAllPresentaionOfOneUser = async (req, res) => {
     }
 }
 
-const getAllPresentaionOfGroup = async (req, res) => {
+const getAllPresentationOfGroup = async (req, res) => {
     try {
         const groupId = req.params.groupId
 
@@ -38,7 +39,7 @@ const getAllPresentaionOfGroup = async (req, res) => {
             include: {
                 model: Presentation,
                 as: 'presentation',
-                attributes: ['id', 'name'],
+                attributes: ['id', 'name', 'code', 'is_presenting'],
             },
         })
         return res.status(200).json({ data: presentations })
@@ -337,9 +338,40 @@ const createPresentationCode = async (req, res) => {
     }
 }
 
+const addPresentationToGroup = async (req, res) => {}
+
+const getActivePresentationsOfGroup = async (req, res) => {
+    try {
+        const groupId = req.params.groupId
+
+        if (!groupId) return res.status(400).json({ message: 'Invalid group id' })
+
+        const presentations = await Presentation_Group.findAll({
+            where: {
+                group_id: groupId,
+            },
+            include: {
+                model: Presentation,
+                as: 'presentation',
+                attributes: ['id', 'name', 'code', 'is_presenting'],
+                where: {
+                    is_presenting: 1,
+                },
+            },
+        })
+
+        console.log(presentations)
+
+        return res.status(200).json({ data: presentations })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllPresentaionOfOneUser,
-    getAllPresentaionOfGroup,
+    getAllPresentationOfGroup,
     getPresentationForHostById,
     getPresentationForMemberById,
     deletePresentationById,
@@ -348,4 +380,5 @@ module.exports = {
     getPresentationById,
     updatePresentationName,
     createPresentationCode,
+    getActivePresentationsOfGroup,
 }
