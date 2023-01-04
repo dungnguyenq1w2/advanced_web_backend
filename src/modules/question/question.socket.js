@@ -37,6 +37,7 @@ const leaveQuestionRoom = (io, socket) => {
 
 const control = (io, socket) => {
     socket.on('client-send-question', async (presentationId, question) => {
+        if (!presentationId) return
         // Case answer this question
         if (question.isAnswer) {
             const newAnswer = {
@@ -84,11 +85,8 @@ const control = (io, socket) => {
         }
 
         io.of('/notification')
-            .to(`notification-${presentationId}-null`)
+            .to(`notification-${presentationId}`)
             .emit('server-send-question-noti', newNoti)
-
-        // delete newNoti.userAnsweredId
-        // await Notification.create(newNoti)
 
         io.of('/question').to(`question-${presentationId}`).emit('server-send-question', question)
     })

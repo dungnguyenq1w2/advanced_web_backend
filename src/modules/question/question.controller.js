@@ -1,4 +1,3 @@
-const { Op } = require('sequelize')
 const db = require('#common/database/index.js')
 
 // Create main Model

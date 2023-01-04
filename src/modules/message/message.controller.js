@@ -8,7 +8,6 @@ const Message = db.Message
 const getAllMessages = async (req, res) => {
     try {
         const presentationId = parseInt(req.query?.presentationId)
-        const presentationGroupId = parseInt(req.query?.presentationGroupId)
 
         if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
@@ -16,7 +15,6 @@ const getAllMessages = async (req, res) => {
             attributes: ['id', 'content', 'created_at', 'user_id'],
             where: {
                 presentation_id: presentationId,
-                presentation_group_id: presentationGroupId ? presentationGroupId : null,
             },
             include: {
                 model: User,

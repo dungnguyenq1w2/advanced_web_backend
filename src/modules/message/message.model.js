@@ -14,10 +14,6 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            presentation_group_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
             created_at: {
                 type: 'TIMESTAMP',
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
