@@ -3,7 +3,7 @@
 
 ###
 # @name getAllQuestions
-GET {{baseUrl}}/questions?presentationId=7
+GET {{baseUrl}}/questions?presentationId=5&presentationGroupId=1
 
 ###
 # @name addQuestion

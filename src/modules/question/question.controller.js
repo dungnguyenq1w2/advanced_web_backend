@@ -1,3 +1,4 @@
+const { Op } = require('sequelize')
 const db = require('#common/database/index.js')
 
 // Create main Model
@@ -10,7 +11,7 @@ const Answer = db.Answer
 const getAllQuestions = async (req, res) => {
     try {
         const presentationId = parseInt(req.query?.presentationId)
-        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        // const presentationGroupId = parseInt(req.query?.presentationGroupId)
 
         if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
@@ -18,7 +19,13 @@ const getAllQuestions = async (req, res) => {
             attributes: ['id', 'content', 'vote', 'is_marked', 'user_id', 'created_at'],
             where: {
                 presentation_id: presentationId,
-                presentation_group_id: presentationGroupId ? presentationGroupId : null,
+                // presentation_group_id: presentationGroupId
+                //     ? {
+                //           [Op.not]: null,
+                //       }
+                //     : {
+                //           [Op.is]: null,
+                //       },
             },
             include: [
                 {
@@ -29,9 +36,9 @@ const getAllQuestions = async (req, res) => {
                 {
                     model: Answer,
                     as: 'answers',
-                    attributes: ['id', 'content', 'created_at'],
                     include: {
                         model: User,
+                        attributes: ['id', 'content', 'created_at'],
                         as: 'user',
                         attributes: ['id', 'name', 'image'],
                     },

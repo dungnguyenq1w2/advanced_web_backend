@@ -10,21 +10,9 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            // group_id: {
-            //     type: DataTypes.INTEGER,
-            //     allowNull: true,
-            // },
             code: {
                 type: DataTypes.STRING,
                 allowNull: false,
-            },
-            is_published: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: true,
-            },
-            is_presenting: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: false,
             },
             is_edititing: {
                 type: DataTypes.BOOLEAN,
