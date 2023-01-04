@@ -12,6 +12,7 @@ const getAllNotifications = async (req, res) => {
             where: {
                 user_id: userId,
             },
+            order: [['created_at', 'DESC']],
             limit: 5,
         })
 

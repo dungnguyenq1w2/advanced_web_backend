@@ -14,6 +14,7 @@ Content-Type: application/json
 ###
 # @name getFirstSlideOfPresentation
 POST {{baseUrl}}/slides/first-slide
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -23,6 +24,7 @@ Content-Type: application/json
 ###
 # @name getSlideById
 GET {{baseUrl}}/slides/1
+Authorization: Bearer {{token}}
 
 ###
 # @name getSlideResultForHost

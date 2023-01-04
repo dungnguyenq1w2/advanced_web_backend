@@ -58,6 +58,10 @@ const socketConnection = (io) => {
         // Unsubscribe Notification room
         notificationSocket.leaveNotificationRoom(io, socket)
 
+        notificationSocket.joinPublicPresentationNotificationRoom(io, socket)
+
+        notificationSocket.leavePublicPresentationNotificationRoom(io, socket)
+
         notificationSocket.control(io, socket)
     })
 }

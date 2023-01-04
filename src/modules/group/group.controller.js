@@ -10,7 +10,7 @@ const { encryptString, decryptString } = require('#root/utils/crypto.js')
 const Group = db.Group
 const User_Group = db.User_Group
 const User = db.User
-const Role = db.Role
+const Presentation_Group = db.Presentation_Group
 
 // Main work
 
@@ -115,10 +115,63 @@ const updateGroup = async (req, res) => {
 const deleteGroup = async (req, res) => {
     try {
         const id = req.params.id
+        if (!id) return res.status(400).json({ message: 'Bad Request' })
 
-        await Group.destroy({ where: { id: id } })
+        const group = (
+            await Group.findByPk(id, {
+                attributes: ['id'],
+                //raw: true, : Không hỗ trợ khi dùng include khi sử dụng raw: true ở trong include con
+                nest: true,
+                include: [
+                    {
+                        model: User_Group,
+                        as: 'participants',
+                        raw: true,
+                    },
+                    {
+                        model: Presentation_Group,
+                        as: 'presentation_groups',
+                        attributes: ['id', 'group_id'],
+                        raw: true,
+                    },
+                ],
+            })
+        ).toJSON()
 
-        res.status(200).send({ message: `Group is deleted` })
+        if (group) {
+            if (group.participants != null) {
+                if (
+                    !group.participants.find(
+                        (paticipant) =>
+                            paticipant['user_id'] === req.user.id && paticipant['role_id'] === 1
+                    )
+                )
+                    return res.status(400).json({ data: { status: false } })
+
+                await User_Group.destroy({
+                    where: {
+                        group_id: group.id,
+                    },
+                })
+            }
+
+            if (group.presentation_groups != null)
+                await Presentation_Group.destroy({
+                    where: {
+                        group_id: group.id,
+                    },
+                })
+
+            await Group.destroy({
+                where: {
+                    id: group.id,
+                },
+            })
+
+            return res.status(200).json({ data: { status: true } })
+        }
+
+        return res.status(400).json({ data: { status: false } })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal Server Error' })

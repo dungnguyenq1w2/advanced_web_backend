@@ -13,7 +13,7 @@ const getAllMessages = async (req, res) => {
         if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
         const messages = await Message.findAll({
-            attributes: ['id', 'content', 'created_at'],
+            attributes: ['id', 'content', 'created_at', 'user_id'],
             where: {
                 presentation_id: presentationId,
                 presentation_group_id: presentationGroupId ? presentationGroupId : null,

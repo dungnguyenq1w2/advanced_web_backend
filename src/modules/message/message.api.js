@@ -4,7 +4,7 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
-router.get('/', authMiddleware.authenticateToken, messageController.getAllMessages)
+router.get('/', messageController.getAllMessages)
 router.post('/', authMiddleware.authenticateToken, messageController.addMessage)
 
 module.exports = router

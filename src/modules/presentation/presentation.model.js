@@ -10,21 +10,9 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            // group_id: {
-            //     type: DataTypes.INTEGER,
-            //     allowNull: true,
-            // },
             code: {
                 type: DataTypes.STRING,
                 allowNull: false,
-            },
-            is_published: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: true,
-            },
-            is_presenting: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: false,
             },
             is_edititing: {
                 type: DataTypes.BOOLEAN,
@@ -47,11 +35,6 @@ module.exports = (Sequelize, DataTypes) => {
         Presentation.belongsTo(models.User, {
             foreignKey: 'owner_id',
             as: 'owner',
-        })
-        // Associate Group(1) - Presentation(*)
-        Presentation.belongsTo(models.Group, {
-            foreignKey: 'group_id',
-            as: 'group',
         })
         // Associate Presentation(1) - Presentation_Group(*)
         Presentation.hasMany(models.Presentation_Group, {

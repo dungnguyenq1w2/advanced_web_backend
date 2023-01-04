@@ -16,7 +16,6 @@ const joinMessageRoom = (io, socket) => {
             // socket.to(room).emit('user joined', socket.id)
         } catch (e) {
             console.log('[error]', 'join room :', e)
-            socket.emit('error', 'couldnt perform requested action')
         }
     })
 }
@@ -30,7 +29,6 @@ const leaveMessageRoom = (io, socket) => {
             socket.leave(room)
         } catch (e) {
             console.log('[error]', 'leave room :', e)
-            socket.emit('error', 'couldnt perform requested action')
         }
     })
 }
@@ -39,48 +37,56 @@ const control = (io, socket) => {
     socket.on(
         'client-send-message',
         async (presentationId, presentationGroupId = null, message) => {
-            io.of('/message')
-                .to(`message-${presentationId}-${presentationGroupId}`)
-                .emit('server-send-message', message)
+            try {
+                io.of('/message')
+                    .to(`message-${presentationId}-${presentationGroupId}`)
+                    .emit('server-send-message', message)
 
-            let noti = null
-            const presentation = await Presentation.findByPk(presentationId)
-            if (presentationGroupId) {
-                const presentationGroup = await Presentation_Group.findByPk(presentationGroupId, {
-                    include: { model: Group, as: 'group', attribute: ['id', 'name'] },
-                })
-                if (presentation && presentationGroup) {
+                let noti = null
+                const presentation = await Presentation.findByPk(presentationId)
+                if (presentationGroupId) {
+                    const presentationGroup = await Presentation_Group.findByPk(
+                        presentationGroupId,
+                        {
+                            include: { model: Group, as: 'group', attribute: ['id', 'name'] },
+                        }
+                    )
+                    if (presentation && presentationGroup) {
+                        noti = {
+                            content: `${message.user.name} send a new message to ${presentation.name} in ${presentationGroup.group.name}`,
+                            link: `/group/${presentationGroup.group.id}?id=${presentationGroupId}`,
+                        }
+                    }
+                } else if (presentation) {
                     noti = {
-                        content: `${message.user.name} send a new message to ${presentation.name} in ${presentationGroup.group.name}`,
-                        link: `/group/${presentationGroup.group.id}?id=${presentationGroupId}`,
+                        content: `${message.user.name} send a new message to ${presentation.name}`,
+                        link: `/presentation-slide/${presentationId}`,
                     }
                 }
-            } else if (presentation) {
-                noti = {
-                    content: `${message.user.name} send a new message to ${presentation.name}`,
-                    link: `/presentation-slide/${presentationId}`,
+                const newNoti = {
+                    ...noti,
+                    user_id: message.user.id,
+                    is_read: false,
+                    created_at: new Date(),
                 }
-            }
-            const newNoti = {
-                ...noti,
-                user_id: message.user.id,
-                is_read: false,
-                created_at: new Date(),
-            }
-            io.of('/notification')
-                .to(`notification-${presentationId}-${presentationGroupId}`)
-                .emit('server-send-message-noti', newNoti)
 
-            // await Notification.create(newNoti)
+                io.of('/notification')
+                    .to(`notification-${presentationId}-${presentationGroupId}`)
+                    .emit('server-send-message-noti', newNoti)
 
-            const newMessage = {
-                content: message.content,
-                presentation_id: presentationId,
-                presentation_group_id: presentationGroupId,
-                user_id: message.user.id,
+                // await Notification.create(newNoti)
+
+                const newMessage = {
+                    content: message.content,
+                    presentation_id: presentationId,
+                    presentation_group_id: presentationGroupId,
+                    user_id: message.user.id,
+                }
+
+                await Message.create(newMessage)
+            } catch (error) {
+                console.log('[error]', 'noti message:', e)
             }
-
-            await Message.create(newMessage)
         }
     )
 }

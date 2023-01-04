@@ -27,11 +27,6 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'group_id',
             as: 'participants',
         })
-        // Associate Group(1) - Presentation(*)
-        Group.hasMany(models.Presentation, {
-            foreignKey: 'group_id',
-            as: 'presentations',
-        })
         // Associate Group(1) - Presentation_Group(*)
         Group.hasMany(models.Presentation_Group, {
             foreignKey: 'group_id',

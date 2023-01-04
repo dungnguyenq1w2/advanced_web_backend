@@ -3,8 +3,7 @@
 
 ###
 # @name getAllQuestions
-POST {{baseUrl}}/questions?presentationId=5&presentationGroupId=4
-Authorization: Bearer {{token}}
+GET {{baseUrl}}/questions?presentationId=5&presentationGroupId=1
 
 ###
 # @name addQuestion

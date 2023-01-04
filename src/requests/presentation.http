@@ -4,6 +4,7 @@
 ###
 # @name getPresentationOfOneUser
 GET {{baseUrl}}/presentations
+#Authorization: Bearer {{token}}
 
 ###
 # @name getPresentationOfGroup
@@ -23,6 +24,7 @@ GET {{baseUrl}}/presentations/5/member?presentationGroupId=4
 ###
 # @name deletePresentationById
 DELETE {{baseUrl}}/presentations/5
+Authorization: Bearer {{token}}
 
 ###
 # @name checkCode
@@ -36,6 +38,7 @@ Content-Type: application/json
 ###
 # @name addPresentation
 POST {{baseUrl}}/presentations/add
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -46,10 +49,12 @@ Content-Type: application/json
 ###
 # @name getPresentationById
 GET {{baseUrl}}/presentations/1
+Authorization: Bearer {{token}}
 
 ###
 # @name updatePresentationName
 PUT {{baseUrl}}/presentations/updateName
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -60,7 +65,7 @@ Content-Type: application/json
 ###
 # @name createPresentationCode
 POST {{baseUrl}}/presentations/createCode/3
-Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 # @name getActivePresentationsOfGroup

@@ -7,7 +7,7 @@ module.exports = (Sequelize, DataTypes) => {
                 allowNull: false,
             },
             user_id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             question_id: {
@@ -30,6 +30,7 @@ module.exports = (Sequelize, DataTypes) => {
         Answer.belongsTo(models.User, {
             foreignKey: 'user_id',
             as: 'user',
+            constraints: false,
         })
         // Associate Question(1) - Answer(*)
         Answer.belongsTo(models.Question, {

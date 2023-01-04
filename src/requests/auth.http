@@ -28,7 +28,7 @@ POST {{baseUrl}}/auth/refresh-token
 Content-Type: application/json
 
 {
-   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzE4ODc4NTgsImV4cCI6MTY3NDQ3OTg1OH0.0OkAyrZj5bzglr0O76Zq8iIe-OIyMw5gMpZVeCvuRgU"
+   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzI3NDEwNTQsImV4cCI6MTY3NTMzMzA1NH0.0b99rGG-ISdeEgWkXb0SOzRIqpY0uDcEjlZinQP1tTA"
 }
 
 ###

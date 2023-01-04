@@ -22,10 +22,6 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            presentation_group_id: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
             created_at: {
                 type: 'TIMESTAMP',
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
@@ -48,11 +44,6 @@ module.exports = (Sequelize, DataTypes) => {
         Question.belongsTo(models.Presentation, {
             foreignKey: 'presentation_id',
             as: 'presentation',
-        })
-        // Associate Presentation_Group(1) - Question(*)
-        Question.belongsTo(models.Presentation_Group, {
-            foreignKey: 'presentation_group_id',
-            as: 'presentation_group',
         })
         // Associate Question(1) - Answer(*)
         Question.hasMany(models.Answer, {
