@@ -25,6 +25,10 @@ module.exports = (Sequelize, DataTypes) => {
         User_Group.belongsTo(models.User, {
             foreignKey: 'user_id',
             as: 'user',
+            //     // how to auto update foreign key when change code in sequelize(Chưa kiểm nghiệm)
+            //     onDelete: 'CASCADE',
+            //     onUpdate: 'CASCADE',
+            //     hooks: true,
         })
         // Associate Group(1) - User_Group(*)
         User_Group.belongsTo(models.Group, {
@@ -36,6 +40,7 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'role_id',
             as: 'role',
         })
+
     }
     return User_Group
 }
