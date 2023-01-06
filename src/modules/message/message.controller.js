@@ -9,7 +9,7 @@ const getAllMessagesOfPage = async (req, res) => {
     try {
         const { presentationId, presentationGroupId } = req.query
         const page = req.query?.page || 1
-        const limit = 7
+        const limit = 10
         const offset = (page - 1) * limit
 
         if (!presentationId || !presentationGroupId)
@@ -27,7 +27,7 @@ const getAllMessagesOfPage = async (req, res) => {
             },
             offset: offset,
             limit: limit,
-            order: [['id', 'ASC']],
+            order: [['created_at', 'DESC']],
         })
         return res.status(200).json({ data: messages })
     } catch (error) {
@@ -49,7 +49,7 @@ const getTotalMessage = async (req, res) => {
                 presentation_group_id: presentationGroupId ? presentationGroupId : null,
             },
         })
-        
+
         return res.status(200).json({ data: total })
     } catch (error) {
         console.log('🚀 ~ error', error)
