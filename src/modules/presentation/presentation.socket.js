@@ -1,6 +1,8 @@
 const db = require('#common/database/index.js')
 
 const Presentation_Group = db.Presentation_Group
+const User_Group = db.User_Group
+const Notification = db.Notification
 
 const control = (io, socket) => {
     socket.on(
@@ -10,6 +12,7 @@ const control = (io, socket) => {
                 const noti = {
                     content: `Presentation [${presentationName}] is presenting in group [${groupName}]`,
                     link: `/group/${groupId}`,
+                    presentationId,
                 }
                 io.of('/notification')
                     .to(`notification-group-${groupId}`)
@@ -24,11 +27,50 @@ const control = (io, socket) => {
                         },
                     }
                 )
+
+                //#region add notification db
+                const userGroup = await User_Group.findAll({
+                    where: {
+                        group_id: groupId,
+                    },
+                })
+
+                const users = userGroup.map((e) => e.dataValues.user_id)
+                delete noti.presentationId
+                for (const user_id of users) {
+                    await Notification.create({ ...noti, user_id: user_id })
+                }
+                //#endregion
             } catch (error) {
                 console.log('🚀 ~ error', error)
             }
         }
     )
+
+    socket.on('client-send-stoppedPresentation', async (presentationId, presentationGroupId) => {
+        console.log('🚀 ~ presentationId, presentationGroupId', presentationId, presentationGroupId)
+        try {
+            const presentationGroup = await Presentation_Group.findByPk(presentationGroupId)
+
+            io.of('/notification')
+                .to(`notification-group-${presentationGroup.dataValues.group_id}`)
+                .emit('server-send-stoppedPresentation-noti', {
+                    presentationId,
+                    groupId: presentationGroup.dataValues.group_id,
+                })
+
+            await Presentation_Group.update(
+                { is_presenting: 0 },
+                {
+                    where: {
+                        id: presentationGroupId,
+                    },
+                }
+            )
+        } catch (error) {
+            console.log('🚀 ~ error', error)
+        }
+    })
 }
 
 module.exports = {

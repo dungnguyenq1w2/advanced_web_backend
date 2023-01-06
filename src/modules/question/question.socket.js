@@ -71,22 +71,19 @@ const control = (io, socket) => {
                         question.isAnswer ? 'answer your question in' : 'post a new question to'
                     } presentation [${presentation.name}]`,
                     link: `/presentation-slide/${presentationId}`,
-                    is_read: false,
-                    created_at: new Date(),
                 }
             }
         }
 
         const newNoti = {
             ...noti,
-            is_read: false,
-            created_at: new Date(),
             userAnsweredId: question?.userAnsweredId ?? null,
         }
 
         io.of('/notification')
             .to(`notification-${presentationId}`)
             .emit('server-send-question-noti', newNoti)
+
         //#region add notification db
         const presentationGroup = await Presentation_Group.findAll({
             attributes: ['group_id'],

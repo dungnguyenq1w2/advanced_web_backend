@@ -48,15 +48,10 @@ const control = (io, socket) => {
                     link: `/presentation-slide/${presentationId}`,
                 }
             }
-            const newNoti = {
-                ...noti,
-                is_read: false,
-                created_at: new Date(),
-            }
 
             io.of('/notification')
                 .to(`notification-${presentationId}`)
-                .emit('server-send-message-noti', newNoti)
+                .emit('server-send-message-noti', noti)
 
             //#region add notification db
             const presentationGroup = await Presentation_Group.findAll({
@@ -83,7 +78,7 @@ const control = (io, socket) => {
             const newUsers = [...new Set(users)]
 
             for (const user_id of newUsers) {
-                await Notification.create({ ...newNoti, user_id: user_id })
+                await Notification.create({ ...noti, user_id: user_id })
             }
             //#endregion
 
