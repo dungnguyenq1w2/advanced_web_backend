@@ -3,6 +3,7 @@ const db = require('#common/database/index.js')
 const Question = db.Question
 const Answer = db.Answer
 const Group = db.Group
+const User_Group = db.User_Group
 const Presentation = db.Presentation
 const Notification = db.Notification
 const Presentation_Group = db.Presentation_Group
@@ -68,7 +69,7 @@ const control = (io, socket) => {
                     user_id: question.user.id,
                     content: `${question.user.name} ${
                         question.isAnswer ? 'answer your question in' : 'post a new question to'
-                    } ${presentation.name}`,
+                    } presentation [${presentation.name}]`,
                     link: `/presentation-slide/${presentationId}`,
                     is_read: false,
                     created_at: new Date(),
@@ -78,7 +79,6 @@ const control = (io, socket) => {
 
         const newNoti = {
             ...noti,
-            user_id: question.user.id,
             is_read: false,
             created_at: new Date(),
             userAnsweredId: question?.userAnsweredId ?? null,
@@ -87,6 +87,34 @@ const control = (io, socket) => {
         io.of('/notification')
             .to(`notification-${presentationId}`)
             .emit('server-send-question-noti', newNoti)
+        //#region add notification db
+        const presentationGroup = await Presentation_Group.findAll({
+            attributes: ['group_id'],
+            where: {
+                presentation_id: presentationId,
+            },
+            include: {
+                model: Group,
+                as: 'group',
+                include: {
+                    model: User_Group,
+                    as: 'participants',
+                },
+            },
+        })
+
+        const users = presentationGroup
+            .reduce((arr, cur) => {
+                return [...arr, ...cur.group.dataValues.participants]
+            }, [])
+            .map((e) => e.dataValues.user_id)
+
+        const newUsers = [...new Set(users)]
+
+        for (const user_id of newUsers) {
+            await Notification.create({ ...newNoti, user_id: user_id })
+        }
+        //#endregion
 
         io.of('/question').to(`question-${presentationId}`).emit('server-send-question', question)
     })

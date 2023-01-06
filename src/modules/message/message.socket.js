@@ -4,6 +4,7 @@ const Message = db.Message
 const Group = db.Group
 const Presentation = db.Presentation
 const Presentation_Group = db.Presentation_Group
+const User_Group = db.User_Group
 const Notification = db.Notification
 
 const joinMessageRoom = (io, socket) => {
@@ -43,13 +44,12 @@ const control = (io, socket) => {
             const presentation = await Presentation.findByPk(presentationId)
             if (presentation) {
                 noti = {
-                    content: `${message.user.name} send a new message to ${presentation.name}`,
+                    content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
                     link: `/presentation-slide/${presentationId}`,
                 }
             }
             const newNoti = {
                 ...noti,
-                user_id: message.user.id,
                 is_read: false,
                 created_at: new Date(),
             }
@@ -58,7 +58,34 @@ const control = (io, socket) => {
                 .to(`notification-${presentationId}`)
                 .emit('server-send-message-noti', newNoti)
 
-            // await Notification.create(newNoti)
+            //#region add notification db
+            const presentationGroup = await Presentation_Group.findAll({
+                attributes: ['group_id'],
+                where: {
+                    presentation_id: presentationId,
+                },
+                include: {
+                    model: Group,
+                    as: 'group',
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                    },
+                },
+            })
+
+            const users = presentationGroup
+                .reduce((arr, cur) => {
+                    return [...arr, ...cur.group.dataValues.participants]
+                }, [])
+                .map((e) => e.dataValues.user_id)
+
+            const newUsers = [...new Set(users)]
+
+            for (const user_id of newUsers) {
+                await Notification.create({ ...newNoti, user_id: user_id })
+            }
+            //#endregion
 
             const newMessage = {
                 content: message.content,
