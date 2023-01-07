@@ -15,6 +15,7 @@ const socketConnection = (io) => {
         slideSocket.hostLeaveSlideRoom(io, socket)
 
         slideSocket.control(io, socket)
+        slideSocket.controlSession(io, socket)
     })
 
     // Slide_Member socket
@@ -27,6 +28,7 @@ const socketConnection = (io) => {
         slideSocket.memberLeaveSlideRoom(io, socket)
 
         slideSocket.control(io, socket)
+        slideSocket.controlSession(io, socket)
     })
 
     // Message socket

@@ -1,6 +1,9 @@
 const db = require('#common/database/index.js')
 
+const Choice = db.Choice
+const Presentation = db.Presentation
 const User_Choice = db.User_Choice
+const Slide = db.Slide
 
 const hostJoinSlideRoom = (io, socket) => {
     //:JOIN:Client Supplied Room
@@ -97,10 +100,102 @@ const control = (io, socket) => {
     )
 }
 
+// session slide data
+const slides = {}
+
+const controlSession = (io, socket) => {
+    socket.on(
+        'client-send-choices-session',
+        async (slideId, presentationGroupId = null, member, choices) => {
+            io.of('/member')
+                .to(`slide-${slideId}-${presentationGroupId}`)
+                .emit('server-send-choices-session', member, choices)
+            io.of('/host')
+                .to(`slide-${slideId}-${presentationGroupId}`)
+                .emit('server-send-choices-session', member, choices)
+        }
+    )
+
+    socket.on('client-get-slideForHost-session', async (slideId, presentationGroupId = null) => {
+        if (!slideId) return
+
+        if (slides[`${slideId}-${presentationGroupId}`] === undefined) {
+            const slideResult = await Slide.findByPk(slideId, {
+                include: {
+                    model: Choice,
+                    as: 'choices',
+                },
+            })
+
+            if (slideResult && slideResult.dataValues.type === 3) {
+                slideResult.dataValues.choices?.forEach((e) => {
+                    e.dataValues.user_choices = []
+                })
+            }
+            slides[`${slideId}-${presentationGroupId}`] = slideResult
+        }
+
+        socket.emit('server-send-slideForHost-session', slides[`${slideId}-${presentationGroupId}`])
+    })
+
+    socket.on(
+        'client-get-slideForMember-session',
+        async (slideId, presentationGroupId = null, member) => {
+            if (!slideId) return
+
+            if (slides[`${slideId}-${presentationGroupId}`] === undefined) {
+                const slideResult = await Slide.findByPk(slideId, {
+                    include: {
+                        model: Choice,
+                        as: 'choices',
+                    },
+                })
+
+                if (slideResult && slideResult.dataValues.type === 3) {
+                    slideResult.dataValues.choices?.forEach((e) => {
+                        e.dataValues.user_choices = []
+                        e.dataValues.n_choices = 0
+                    })
+                    slideResult.dataValues['isChosen'] = slideResult.dataValues.choices.find(
+                        (e) => e.dataValues.user_choices.length === 1
+                    )
+                        ? true
+                        : false
+                }
+
+                slides[`${slideId}-${presentationGroupId}`] = slideResult
+            }
+
+            socket.emit(
+                'server-send-slideForMember-session',
+                slides[`${slideId}-${presentationGroupId}`]
+            )
+        }
+    )
+
+    socket.on(
+        'client-stop-presentation-session',
+        async (presentationId, presentationGroupId = null) => {
+            if (!presentationId) return
+
+            const presentation = await Presentation.findByPk(presentationId, {
+                include: {
+                    model: Slide,
+                    as: 'slides',
+                },
+            })
+            presentation.dataValues.slides.forEach((e) => {
+                delete slides[`${e.dataValues.id}-${presentationGroupId}`]
+            })
+        }
+    )
+}
+
 module.exports = {
     hostJoinSlideRoom,
     hostLeaveSlideRoom,
     memberJoinSlideRoom,
     memberLeaveSlideRoom,
     control,
+    controlSession,
 }

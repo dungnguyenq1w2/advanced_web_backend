@@ -124,50 +124,11 @@ const getSlideResultForHost = async (req, res) => {
         const presentationGroupId = parseInt(req.query?.presentationGroupId)
 
         if (!slideId) return res.status(400).json({ message: 'Invalid slide id' })
-        // let presentation_group = null
-        // if (groupId) {
-        //     // Phải dùng findAll khi tìm kiếm quan hệ
-        //     const presentation = await Presentation.findAll({
-        //         where: {
-        //             '$slides.id$': slideId,
-        //         },
-        //         include: [
-        //             {
-        //                 model: Slide,
-        //                 as: 'slides',
-        //                 required: true,
-        //             },
-        //         ],
-        //     })
-
-        //     if (presentation[0]) {
-        //         presentation_group = await Presentation_Group.findOne({
-        //             where: {
-        //                 presentation_id: presentation[0].dataValues.id,
-        //                 group_id: groupId,
-        //             },
-        //         })
-        //     }
-        // }
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
                 model: Choice,
                 as: 'choices',
-                // attributes: [[sequelize.fn('COUNT', sequelize.col('choice_id')), 'n_choices']],
-                // attributes: {
-                //     include: [
-                //         [
-                //             sequelize.literal(`(
-                //                 SELECT COUNT(*)
-                //                 FROM user_choice
-                //                 WHERE
-                //                     user_choice.choice_id = choices.id
-                //             )`),
-                //             'n_choices',
-                //         ],
-                //     ],
-                // },
                 include: {
                     model: User_Choice,
                     as: 'user_choices',
@@ -201,31 +162,6 @@ const getSlideResultForMember = async (req, res) => {
         if (!(slideId && memberId))
             return res.status(400).json({ message: 'Invalid slide id or member id' })
 
-        // let presentation_group = null
-        // if (groupId) {
-        //     // Phải dùng findAll khi tìm kiếm quan hệ
-        //     const presentation = await Presentation.findAll({
-        //         where: {
-        //             '$slides.id$': slideId,
-        //         },
-        //         include: [
-        //             {
-        //                 model: Slide,
-        //                 as: 'slides',
-        //                 required: true,
-        //             },
-        //         ],
-        //     })
-
-        //     if (presentation[0]) {
-        //         presentation_group = await Presentation_Group.findOne({
-        //             where: {
-        //                 presentation_id: presentation[0].dataValues.id,
-        //                 group_id: groupId,
-        //             },
-        //         })
-        //     }
-        // }
         const slideResult = await Slide.findByPk(slideId, {
             include: {
                 model: Choice,
