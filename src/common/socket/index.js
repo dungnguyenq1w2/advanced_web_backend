@@ -40,6 +40,7 @@ const socketConnection = (io) => {
         messageSocket.leaveMessageRoom(io, socket)
 
         messageSocket.control(io, socket)
+        messageSocket.controlSession(io, socket)
     })
 
     // Question socket
@@ -51,6 +52,7 @@ const socketConnection = (io) => {
         questionSocket.leaveQuestionRoom(io, socket)
 
         questionSocket.control(io, socket)
+        questionSocket.controlSession(io, socket)
     })
 
     // Presentation socket

@@ -54,85 +54,6 @@ const control = (io, socket) => {
     socket.on('client-stop-presentation', async (presentationId, presentationGroupId) => {
         try {
             const presentationGroup = await Presentation_Group.findByPk(presentationGroupId)
-
-            io.of('/notification')
-                .to(`notification-group-${presentationGroup.dataValues.group_id}`)
-                .emit('server-stop-presentation-noti', {
-                    presentationId,
-                    groupId: presentationGroup.dataValues.group_id,
-                })
-
-            await Presentation_Group.update(
-                { is_presenting: 0 },
-                {
-                    where: {
-                        id: presentationGroupId,
-                    },
-                }
-            )
-        } catch (error) {
-            console.log('🚀 ~ error', error)
-        }
-    })
-}
-
-const controlSession = (io, socket) => {
-    socket.on(
-        'client-send-getPresentationForHost-session',
-        async (presentationId, groupId = null) => {
-            try {
-                if (presentations[`${presentationId}-${groupId}`] === undefined) {
-                    const presentation = await Presentation.findByPk(presentationId, {
-                        attributes: ['id', 'owner_id', 'code'],
-                        include: {
-                            model: Slide,
-                            as: 'slides',
-                            attributes: ['id', 'type'],
-                        },
-                    })
-                    presentations[`${presentationId}-${groupId}`] = presentation
-                }
-
-                socket.emit(
-                    'server-send-presentationForHost',
-                    presentations[`${presentationId}-${groupId}`]
-                )
-            } catch (error) {
-                console.log('🚀 ~ error', error)
-            }
-        }
-    )
-
-    socket.on(
-        'client-send-getPresentationForMember-session',
-        async (presentationId, groupId = null, userId) => {
-            try {
-                if (presentations[`${presentationId}-${groupId}`] === undefined) {
-                    const presentation = await Presentation.findByPk(presentationId, {
-                        attributes: ['id', 'owner_id', 'code'],
-                        include: {
-                            model: Slide,
-                            as: 'slides',
-                            attributes: ['id', 'type'],
-                        },
-                    })
-                    presentations[`${presentationId}-${groupId}`] = presentation
-                }
-
-                socket.emit(
-                    'server-send-presentationForHost',
-                    presentations[`${presentationId}-${groupId}`]
-                )
-            } catch (error) {
-                console.log('🚀 ~ error', error)
-            }
-        }
-    )
-
-    socket.on('client-stop-presentation', async (presentationId, presentationGroupId) => {
-        try {
-            const presentationGroup = await Presentation_Group.findByPk(presentationGroupId)
-
             io.of('/notification')
                 .to(`notification-group-${presentationGroup.dataValues.group_id}`)
                 .emit('server-stop-presentation-noti', {
@@ -156,5 +77,4 @@ const controlSession = (io, socket) => {
 
 module.exports = {
     control,
-    controlSession,
 }

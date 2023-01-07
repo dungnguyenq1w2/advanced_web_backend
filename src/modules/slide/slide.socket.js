@@ -101,18 +101,56 @@ const control = (io, socket) => {
 }
 
 // session slide data
+// slides = {
+//      slideId-presentationGroupId: {
+//          dataValues: {
+//              id, question,...,
+//              choices: [
+//                  {
+//                      dataValues: {
+//                          id, ...,
+//                          n_choices,
+//                          user_choices: [
+//                              {
+//                                  member: {
+//                                      id, name, image
+//                                  }
+//                               }
+//                          ]
+//                      }
+//                  }
+//              ]
+//           }
+//      }
+// }
 const slides = {}
 
 const controlSession = (io, socket) => {
     socket.on(
         'client-send-choices-session',
         async (slideId, presentationGroupId = null, member, choices) => {
+            // console.log('slides', slides[`${slideId}-${presentationGroupId}`])
             io.of('/member')
                 .to(`slide-${slideId}-${presentationGroupId}`)
                 .emit('server-send-choices-session', member, choices)
             io.of('/host')
                 .to(`slide-${slideId}-${presentationGroupId}`)
                 .emit('server-send-choices-session', member, choices)
+
+            for (const choice of choices) {
+                const choiceIndex = slides[
+                    `${slideId}-${presentationGroupId}`
+                ].dataValues.choices.findIndex(
+                    (e) => parseInt(e.dataValues.id) === parseInt(choice)
+                )
+                if (choiceIndex > -1) {
+                    slides[`${slideId}-${presentationGroupId}`].dataValues.choices[choiceIndex]
+                        .dataValues.n_choices++
+                    slides[`${slideId}-${presentationGroupId}`].dataValues.choices[
+                        choiceIndex
+                    ].dataValues.user_choices.push({ member })
+                }
+            }
         }
     )
 
@@ -130,8 +168,11 @@ const controlSession = (io, socket) => {
             if (slideResult && slideResult.dataValues.type === 3) {
                 slideResult.dataValues.choices?.forEach((e) => {
                     e.dataValues.user_choices = []
+                    e.dataValues.n_choices = 0
                 })
+                slideResult.dataValues['isChosen'] = false
             }
+
             slides[`${slideId}-${presentationGroupId}`] = slideResult
         }
 
@@ -156,14 +197,28 @@ const controlSession = (io, socket) => {
                         e.dataValues.user_choices = []
                         e.dataValues.n_choices = 0
                     })
-                    slideResult.dataValues['isChosen'] = slideResult.dataValues.choices.find(
-                        (e) => e.dataValues.user_choices.length === 1
-                    )
-                        ? true
-                        : false
                 }
 
                 slides[`${slideId}-${presentationGroupId}`] = slideResult
+            } else {
+                slides[`${slideId}-${presentationGroupId}`].dataValues.choices?.forEach(
+                    (choice) => {
+                        const index = choice.dataValues.user_choices.findIndex(
+                            (e) => e.member.id === member.id
+                        )
+                        if (index > -1) {
+                            choice.dataValues.isMyChoice = true
+                        } else {
+                            choice.dataValues.isMyChoice = false
+                        }
+                    }
+                )
+
+                slides[`${slideId}-${presentationGroupId}`].dataValues['isChosen'] = slides[
+                    `${slideId}-${presentationGroupId}`
+                ].dataValues.choices.find((e) => e.dataValues.isMyChoice === true)
+                    ? true
+                    : false
             }
 
             socket.emit(

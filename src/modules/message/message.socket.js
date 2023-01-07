@@ -95,4 +95,59 @@ const control = (io, socket) => {
     })
 }
 
-module.exports = { joinMessageRoom, leaveMessageRoom, control }
+const controlSession = (io, socket) => {
+    socket.on('client-send-message-session', async (presentationId, message) => {
+        try {
+            if (!presentationId) return
+            io.of('/message')
+                .to(`message-${presentationId}`)
+                .emit('server-send-message-session', message)
+
+            let noti = null
+            const presentation = await Presentation.findByPk(presentationId)
+            if (presentation) {
+                noti = {
+                    content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
+                    link: `/presentation-slide/${presentationId}`,
+                }
+            }
+
+            io.of('/notification')
+                .to(`notification-${presentationId}`)
+                .emit('server-send-message-noti', noti)
+
+            //#region add notification db
+            const presentationGroup = await Presentation_Group.findAll({
+                attributes: ['group_id'],
+                where: {
+                    presentation_id: presentationId,
+                },
+                include: {
+                    model: Group,
+                    as: 'group',
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                    },
+                },
+            })
+
+            const users = presentationGroup
+                .reduce((arr, cur) => {
+                    return [...arr, ...cur.group.dataValues.participants]
+                }, [])
+                .map((e) => e.dataValues.user_id)
+
+            const newUsers = [...new Set(users)]
+
+            for (const user_id of newUsers) {
+                await Notification.create({ ...noti, user_id: user_id })
+            }
+            //#endregion
+        } catch (error) {
+            console.log('[error]', 'noti message:', error)
+        }
+    })
+}
+
+module.exports = { joinMessageRoom, leaveMessageRoom, control, controlSession }
