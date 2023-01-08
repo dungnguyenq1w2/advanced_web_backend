@@ -117,9 +117,26 @@ const control = (io, socket) => {
     })
 }
 
+const questions = {}
 const controlSession = (io, socket) => {
+    socket.on('client-get-questions-session', (presentationId) => {
+        if (questions[presentationId] === undefined) questions[presentationId] = []
+
+        socket.emit('server-send-questions-session', questions[presentationId])
+    })
+
     socket.on('client-send-question-session', async (presentationId, question) => {
         if (!presentationId) return
+        if (question.isAnswer) {
+            const questionAnsweredIndex = questions[presentationId].findIndex(
+                (e) => e.id === question.questionId
+            )
+            if (questions[presentationId][questionAnsweredIndex]?.answers) {
+                questions[presentationId][questionAnsweredIndex].answers.push(question)
+            } else {
+                questions[presentationId][questionAnsweredIndex].answers = [{ ...question }]
+            }
+        } else questions[presentationId].push(question)
 
         io.of('/question')
             .to(`question-${presentationId}`)
@@ -177,6 +194,27 @@ const controlSession = (io, socket) => {
             await Notification.create({ ...newNoti, user_id: user_id })
         }
         //#endregion
+    })
+
+    socket.on('client-vote-question-session', (presentationId, questionId) => {
+        const index = questions[presentationId].findIndex((e) => e.id === questionId)
+        if (index > -1) {
+            questions[presentationId][index].is_voted = true
+            questions[presentationId][index].vote++
+            socket.emit('server-send-votedQuestion-session')
+        }
+    })
+
+    socket.on('client-mark-question-session', (presentationId, questionId) => {
+        const index = questions[presentationId].findIndex((e) => e.id === questionId)
+        if (index > -1) {
+            questions[presentationId][index].is_marked = true
+            socket.emit('server-send-markedQuestion-session')
+        }
+    })
+
+    socket.on('client-stop-question-session', (presentationId) => {
+        if (questions[presentationId] !== undefined) delete questions[presentationId]
     })
 }
 module.exports = { joinQuestionRoom, leaveQuestionRoom, control, controlSession }

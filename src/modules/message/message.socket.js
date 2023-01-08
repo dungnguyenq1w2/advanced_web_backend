@@ -95,10 +95,19 @@ const control = (io, socket) => {
     })
 }
 
+const messages = {}
 const controlSession = (io, socket) => {
+    socket.on('client-get-messages-session', (presentationId) => {
+        if (messages[presentationId] === undefined) messages[presentationId] = []
+
+        socket.emit('server-send-messages-session', messages[presentationId])
+    })
+
     socket.on('client-send-message-session', async (presentationId, message) => {
         try {
             if (!presentationId) return
+            messages[presentationId].push(message)
+
             io.of('/message')
                 .to(`message-${presentationId}`)
                 .emit('server-send-message-session', message)
@@ -147,6 +156,10 @@ const controlSession = (io, socket) => {
         } catch (error) {
             console.log('[error]', 'noti message:', error)
         }
+    })
+
+    socket.on('client-stop-message-session', (presentationId) => {
+        if (messages[presentationId] !== undefined) delete messages[presentationId]
     })
 }
 
