@@ -70,7 +70,7 @@ const getAllPresentationOfGroup = async (req, res) => {
             include: {
                 model: Presentation,
                 as: 'presentation',
-                attributes: ['id', 'name', 'code', 'is_presenting'],
+                attributes: ['id', 'name', 'code'],
             },
         })
         return res.status(200).json({ data: presentations })
