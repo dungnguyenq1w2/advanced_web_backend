@@ -2,7 +2,7 @@
 
 ###
 # @name getAllQuestions
-GET {{baseUrl}}/questions?presentationId=5&presentationGroupId=1
+GET {{baseUrl}}/questions?presentationId=5&page=2
 
 ###
 # @name addQuestion

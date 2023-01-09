@@ -1,4 +1,5 @@
 const db = require('#common/database/index.js')
+const { Op } = require('sequelize')
 
 const Message = db.Message
 const Group = db.Group
@@ -65,6 +66,11 @@ const control = (io, socket) => {
                     include: {
                         model: User_Group,
                         as: 'participants',
+                        where: {
+                            user_id: {
+                                [Op.ne]: message.user.id,
+                            },
+                        },
                     },
                 },
             })

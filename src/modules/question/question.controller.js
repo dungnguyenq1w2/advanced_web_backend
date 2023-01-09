@@ -7,24 +7,29 @@ const Answer = db.Answer
 
 // Main work
 
+const LIMIT = 10
+
+const getPagingData = (data, page) => {
+    const { count: totalItems, rows: questions } = data
+    const currentPage = page ? +page : 0
+    const totalPages = Math.ceil(totalItems / LIMIT)
+    const nextPage = currentPage < totalPages ? currentPage + 1 : null
+
+    return { data: questions, pagination: { totalItems, totalPages, currentPage, nextPage } }
+}
+
 const getAllQuestions = async (req, res) => {
     try {
         const presentationId = parseInt(req.query?.presentationId)
-        // const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        const page = req.query?.page || 1
+        const offset = (page - 1) * LIMIT
 
         if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
 
-        const questions = await Question.findAll({
+        const data = await Question.findAndCountAll({
             attributes: ['id', 'content', 'vote', 'is_marked', 'user_id', 'created_at'],
             where: {
                 presentation_id: presentationId,
-                // presentation_group_id: presentationGroupId
-                //     ? {
-                //           [Op.not]: null,
-                //       }
-                //     : {
-                //           [Op.is]: null,
-                //       },
             },
             include: [
                 {
@@ -43,8 +48,13 @@ const getAllQuestions = async (req, res) => {
                     },
                 },
             ],
+            offset: offset,
+            limit: LIMIT,
+            order: [['created_at', 'DESC']],
         })
-        return res.status(200).json({ data: questions })
+
+        const result = getPagingData(data, page)
+        return res.status(200).json(result)
     } catch (error) {
         console.log('🚀 ~ error', error)
         return res.status(500).json({ message: 'Internal Server Error' })
@@ -69,18 +79,16 @@ const addQuestion = async (req, res) => {
 
 const postVote = async (req, res) => {
     try {
-         const questionId = parseInt(req.params.id)
-    if(!questionId)
-        return res.status(400).json({message: 'Invalid question id'})
+        const questionId = parseInt(req.params.id)
+        if (!questionId) return res.status(400).json({ message: 'Invalid question id' })
 
-    const updateVote = await Question.increment('vote', {where: {id: questionId}})
+        const updateVote = await Question.increment('vote', { where: { id: questionId } })
 
-    if(updateVote)
-        return res.status(200).json({ data: { status: true} })
+        if (updateVote) return res.status(200).json({ data: { status: true } })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({message: 'Internal Server Error'})
-    }   
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 module.exports = {

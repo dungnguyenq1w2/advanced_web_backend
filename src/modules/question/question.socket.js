@@ -1,4 +1,5 @@
 const db = require('#common/database/index.js')
+const { Op } = require('sequelize')
 
 const Question = db.Question
 const Answer = db.Answer
@@ -44,7 +45,7 @@ const control = (io, socket) => {
             const newAnswer = {
                 content: question.content,
                 question_id: question.id,
-                user_id: question.user.id,
+                user_id: question.user_id,
             }
             await Answer.create(newAnswer)
         } else {
@@ -52,7 +53,7 @@ const control = (io, socket) => {
             const newQuestion = {
                 content: question.content,
                 presentation_id: presentationId,
-                user_id: question.user.id,
+                user_id: question.user_id,
             }
             const res = await Question.create(newQuestion)
             if (res) {
@@ -96,6 +97,11 @@ const control = (io, socket) => {
                 include: {
                     model: User_Group,
                     as: 'participants',
+                    where: {
+                        user_id: {
+                            [Op.ne]: question.user_id,
+                        },
+                    },
                 },
             },
         })
