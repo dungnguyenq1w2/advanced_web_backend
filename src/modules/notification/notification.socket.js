@@ -39,7 +39,6 @@ const joinNotificationRoom = (io, socket) => {
                 }
                 socket.join(groupRoom)
             }
-
             // const sockets = await io.of('/notification').fetchSockets()
 
             // socket.to(room).emit('user joined', socket.id)

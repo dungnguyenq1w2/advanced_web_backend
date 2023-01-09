@@ -1,9 +1,11 @@
 const db = require('#common/database/index.js')
+const { Op } = require('sequelize')
 
 const Message = db.Message
 const Group = db.Group
 const Presentation = db.Presentation
 const Presentation_Group = db.Presentation_Group
+const User_Group = db.User_Group
 const Notification = db.Notification
 
 const joinMessageRoom = (io, socket) => {
@@ -43,22 +45,48 @@ const control = (io, socket) => {
             const presentation = await Presentation.findByPk(presentationId)
             if (presentation) {
                 noti = {
-                    content: `${message.user.name} send a new message to ${presentation.name}`,
+                    content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
                     link: `/presentation-slide/${presentationId}`,
                 }
-            }
-            const newNoti = {
-                ...noti,
-                user_id: message.user.id,
-                is_read: false,
-                created_at: new Date(),
             }
 
             io.of('/notification')
                 .to(`notification-${presentationId}`)
-                .emit('server-send-message-noti', newNoti)
+                .emit('server-send-message-noti', noti)
 
-            // await Notification.create(newNoti)
+            //#region add notification db
+            const presentationGroup = await Presentation_Group.findAll({
+                attributes: ['group_id'],
+                where: {
+                    presentation_id: presentationId,
+                },
+                include: {
+                    model: Group,
+                    as: 'group',
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                        where: {
+                            user_id: {
+                                [Op.ne]: message.user.id,
+                            },
+                        },
+                    },
+                },
+            })
+
+            const users = presentationGroup
+                .reduce((arr, cur) => {
+                    return [...arr, ...cur.group.dataValues.participants]
+                }, [])
+                .map((e) => e.dataValues.user_id)
+
+            const newUsers = [...new Set(users)]
+
+            for (const user_id of newUsers) {
+                await Notification.create({ ...noti, user_id: user_id })
+            }
+            //#endregion
 
             const newMessage = {
                 content: message.content,
@@ -73,4 +101,72 @@ const control = (io, socket) => {
     })
 }
 
-module.exports = { joinMessageRoom, leaveMessageRoom, control }
+const messages = {}
+const controlSession = (io, socket) => {
+    socket.on('client-get-messages-session', (presentationId) => {
+        if (messages[presentationId] === undefined) messages[presentationId] = []
+
+        socket.emit('server-send-messages-session', messages[presentationId])
+    })
+
+    socket.on('client-send-message-session', async (presentationId, message) => {
+        try {
+            if (!presentationId) return
+            messages[presentationId].push(message)
+
+            io.of('/message')
+                .to(`message-${presentationId}`)
+                .emit('server-send-message-session', message)
+
+            let noti = null
+            const presentation = await Presentation.findByPk(presentationId)
+            if (presentation) {
+                noti = {
+                    content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
+                    link: `/presentation-slide/${presentationId}`,
+                }
+            }
+
+            io.of('/notification')
+                .to(`notification-${presentationId}`)
+                .emit('server-send-message-noti', noti)
+
+            //#region add notification db
+            const presentationGroup = await Presentation_Group.findAll({
+                attributes: ['group_id'],
+                where: {
+                    presentation_id: presentationId,
+                },
+                include: {
+                    model: Group,
+                    as: 'group',
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                    },
+                },
+            })
+
+            const users = presentationGroup
+                .reduce((arr, cur) => {
+                    return [...arr, ...cur.group.dataValues.participants]
+                }, [])
+                .map((e) => e.dataValues.user_id)
+
+            const newUsers = [...new Set(users)]
+
+            for (const user_id of newUsers) {
+                await Notification.create({ ...noti, user_id: user_id })
+            }
+            //#endregion
+        } catch (error) {
+            console.log('[error]', 'noti message:', error)
+        }
+    })
+
+    socket.on('client-stop-message-session', (presentationId) => {
+        if (messages[presentationId] !== undefined) delete messages[presentationId]
+    })
+}
+
+module.exports = { joinMessageRoom, leaveMessageRoom, control, controlSession }

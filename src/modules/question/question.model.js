@@ -50,11 +50,7 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'question_id',
             as: 'answers',
         })
-        // Associate Question(1) - Vote(*)
-        Question.hasMany(models.Vote, {
-            foreignKey: 'question_id',
-            as: 'votes',
-        })
+
     }
     return Question
 }

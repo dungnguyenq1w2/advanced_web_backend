@@ -51,7 +51,6 @@ const User_Choice = require('#modules/user_choice/user_choice.model.js')
 const Message = require('#modules/message/message.model.js')
 const Question = require('#modules/question/question.model.js')
 const Answer = require('#modules/answer/answer.model.js')
-const Vote = require('#modules/vote/vote.model.js')
 
 const Notification = require('#modules/notification/notification.model.js')
 
@@ -73,7 +72,6 @@ db.User_Choice = User_Choice(sequelize, DataTypes)
 db.Message = Message(sequelize, DataTypes)
 db.Question = Question(sequelize, DataTypes)
 db.Answer = Answer(sequelize, DataTypes)
-db.Vote = Vote(sequelize, DataTypes)
 
 db.Notification = Notification(sequelize, DataTypes)
 

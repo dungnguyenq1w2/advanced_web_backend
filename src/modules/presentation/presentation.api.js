@@ -4,6 +4,7 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
+router.get('/test', presentationController.test)
 router.get('/', authMiddleware.authenticateToken, presentationController.getAllPresentaionOfOneUser)
 router.get(
     '/group/:groupId',

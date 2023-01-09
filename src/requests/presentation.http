@@ -2,6 +2,10 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkzDqiBOZ-G7jWMgRHUgMSIsImltYWdlIjoiIiwiZW1haWwiOiJkdTFAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjcyODQ4MDMyLCJleHAiOjE2NzI4NTQwMzJ9.Ifpiv5UaAud8Mqea--K9Z412zc1EQoLPLNkpJ-Mhelg
 
 ###
+# @name test
+GET {{baseUrl}}/presentations/test
+
+###
 # @name getPresentationOfOneUser
 GET {{baseUrl}}/presentations
 Authorization: Bearer {{token}}

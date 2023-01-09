@@ -15,6 +15,7 @@ const socketConnection = (io) => {
         slideSocket.hostLeaveSlideRoom(io, socket)
 
         slideSocket.control(io, socket)
+        slideSocket.controlSession(io, socket)
     })
 
     // Slide_Member socket
@@ -27,6 +28,7 @@ const socketConnection = (io) => {
         slideSocket.memberLeaveSlideRoom(io, socket)
 
         slideSocket.control(io, socket)
+        slideSocket.controlSession(io, socket)
     })
 
     // Message socket
@@ -38,6 +40,7 @@ const socketConnection = (io) => {
         messageSocket.leaveMessageRoom(io, socket)
 
         messageSocket.control(io, socket)
+        messageSocket.controlSession(io, socket)
     })
 
     // Question socket
@@ -49,6 +52,12 @@ const socketConnection = (io) => {
         questionSocket.leaveQuestionRoom(io, socket)
 
         questionSocket.control(io, socket)
+        questionSocket.controlSession(io, socket)
+    })
+
+    // Presentation socket
+    io.of('/presentation').on('connection', (socket) => {
+        presentationSocket.control(io, socket)
     })
 
     // Presentation socket
