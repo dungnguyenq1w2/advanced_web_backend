@@ -1,5 +1,4 @@
 @baseUrl = http://localhost:5000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
 
 ###
 # @name getAllQuestions
@@ -8,7 +7,6 @@ GET {{baseUrl}}/questions?presentationId=5&presentationGroupId=1
 ###
 # @name addQuestion
 POST {{baseUrl}}/questions
-Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -16,3 +14,7 @@ Content-Type: application/json
     "presentation_id": 5,
     "presentation_group_id": 4
 }
+
+###
+# @name addVote
+POST {{baseUrl}}/questions/1/vote

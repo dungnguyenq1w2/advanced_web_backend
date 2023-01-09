@@ -9,7 +9,7 @@ const getAllMessagesOfPage = async (req, res) => {
     try {
         const { presentationId, presentationGroupId } = req.query
         const page = req.query?.page || 1
-        const limit = 10
+        const limit = 5
         const offset = (page - 1) * limit
 
         if (!presentationId || !presentationGroupId)
@@ -29,7 +29,7 @@ const getAllMessagesOfPage = async (req, res) => {
             limit: limit,
             order: [['created_at', 'DESC']],
         })
-        return res.status(200).json({ data: messages })
+        return res.status(200).json({ data: messages.reverse() })
     } catch (error) {
         console.log('🚀 ~ error', error)
         return res.status(500).json({ message: 'Internal Server Error' })

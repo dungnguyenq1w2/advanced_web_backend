@@ -3,7 +3,7 @@
 
 ###
 # @name getAllMessages
-GET {{baseUrl}}/messages?presentationId=5&presentationGroupId=1&page=1
+GET {{baseUrl}}/messages?presentationId=3&presentationGroupId=1&page=1
 
 ###
 # @name getToltalMessage

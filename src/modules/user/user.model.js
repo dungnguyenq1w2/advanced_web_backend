@@ -78,11 +78,6 @@ module.exports = (Sequelize, DataTypes) => {
             as: 'answers',
             constraints: false,
         })
-        // Associate User(1) - Vote(*)
-        User.hasMany(models.Vote, {
-            foreignKey: 'user_id',
-            as: 'votes',
-        })
     }
     return User
 }

@@ -13,18 +13,18 @@ module.exports = (Sequelize, DataTypes) => {
         }
     )
 
-    // Role.bulkCreate(
-    //     [
-    //         { name: 'Owner', id: 1 },
-    //         { name: 'Co-owner', id: 2 },
-    //         { name: 'Member', id: 3 },
-    //     ],
-    //     {
-    //         ignoreDuplicates: true,
-    //         returning: true,
-    //         validate: true,
-    //     }
-    // )
+    Role.bulkCreate(
+        [
+            { name: 'Owner', id: 1 },
+            { name: 'Co-owner', id: 2 },
+            { name: 'Member', id: 3 },
+        ],
+        {
+            ignoreDuplicates: true,
+            returning: true,
+            validate: true,
+        }
+    )
 
     Role.associate = (models) => {
         // Associate Role(1) - User_Group(*)

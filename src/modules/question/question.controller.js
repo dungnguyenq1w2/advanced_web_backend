@@ -66,7 +66,25 @@ const addQuestion = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
+
+const postVote = async (req, res) => {
+    try {
+         const questionId = parseInt(req.params.id)
+    if(!questionId)
+        return res.status(400).json({message: 'Invalid question id'})
+
+    const updateVote = await Question.increment('vote', {where: {id: questionId}})
+
+    if(updateVote)
+        return res.status(200).json({ data: { status: true} })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({message: 'Internal Server Error'})
+    }   
+}
+
 module.exports = {
     getAllQuestions,
     addQuestion,
+    postVote,
 }

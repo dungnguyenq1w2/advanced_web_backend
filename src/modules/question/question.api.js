@@ -8,4 +8,6 @@ router.get('/', questionController.getAllQuestions)
 
 router.post('/', authMiddleware.authenticateToken, questionController.addQuestion)
 
+router.post('/:id/vote', questionController.postVote)
+
 module.exports = router
