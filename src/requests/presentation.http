@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkzDqiBOZ-G7jWMgRHUgMSIsImltYWdlIjoiIiwiZW1haWwiOiJkdTFAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjcyODQ4MDMyLCJleHAiOjE2NzI4NTQwMzJ9.Ifpiv5UaAud8Mqea--K9Z412zc1EQoLPLNkpJ-Mhelg
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywibmFtZSI6IkzDqiBOZ-G7jWMgRHUgMSIsImltYWdlIjoiIiwiZW1haWwiOiJkdTFAZ21haWwuY29tIiwiaXNfYXV0aCI6MSwiaWF0IjoxNjczMzMyMjAyLCJleHAiOjE2NzMzMzgyMDJ9.ZCPwWyypQvmtdZMeVm0vJYNWGzKP4ITXODpkojdi6M0
 
 ###
 # @name test

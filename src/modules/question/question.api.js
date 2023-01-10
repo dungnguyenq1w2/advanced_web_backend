@@ -10,4 +10,6 @@ router.post('/', authMiddleware.authenticateToken, questionController.addQuestio
 
 router.post('/:id/vote', questionController.postVote)
 
+router.post('/:id/mark', questionController.markQuestion)
+
 module.exports = router

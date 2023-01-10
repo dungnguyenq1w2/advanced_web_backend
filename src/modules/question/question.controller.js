@@ -1,4 +1,5 @@
 const db = require('#common/database/index.js')
+const { Op } = require('sequelize')
 
 // Create main Model
 const User = db.User
@@ -21,6 +22,9 @@ const getPagingData = (data, page) => {
 const getAllQuestions = async (req, res) => {
     try {
         const presentationId = parseInt(req.query?.presentationId)
+        const filter = req.query?.filter
+        console.log('🚀 ~ filter', filter)
+
         const page = req.query?.page || 1
         const offset = (page - 1) * LIMIT
 
@@ -30,6 +34,18 @@ const getAllQuestions = async (req, res) => {
             attributes: ['id', 'content', 'vote', 'is_marked', 'user_id', 'created_at'],
             where: {
                 presentation_id: presentationId,
+                is_marked:
+                    filter === 'all'
+                        ? {
+                              [Op.ne]: null,
+                          }
+                        : filter === 'answered'
+                        ? {
+                              [Op.eq]: true,
+                          }
+                        : {
+                              [Op.eq]: false,
+                          },
             },
             include: [
                 {
@@ -91,8 +107,23 @@ const postVote = async (req, res) => {
     }
 }
 
+const markQuestion = async (req, res) => {
+    try {
+        const questionId = parseInt(req.params.id)
+        if (!questionId) return res.status(400).json({ message: 'Invalid question id' })
+
+        await Question.update({ is_marked: true }, { where: { id: questionId } })
+
+        return res.status(204)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllQuestions,
     addQuestion,
     postVote,
+    markQuestion,
 }

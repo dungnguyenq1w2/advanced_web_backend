@@ -10,32 +10,6 @@ const User_Choice = db.User_Choice
 const User_Group = db.User_Group
 
 // Main work
-const test = async (req, res) => {
-    const presentationId = 5
-    const presentationGroup = await Presentation_Group.findAll({
-        attributes: ['group_id'],
-        where: {
-            presentation_id: presentationId,
-        },
-        include: {
-            model: Group,
-            as: 'group',
-            include: {
-                model: User_Group,
-                as: 'participants',
-            },
-        },
-    })
-    const users = presentationGroup
-        .reduce((arr, cur) => {
-            return [...arr, ...cur.group.dataValues.participants]
-        }, [])
-        .map((e) => e.dataValues.user_id)
-
-    const newUsers = [...new Set(users)]
-    console.log('🚀 ~ newUsers', newUsers)
-    return res.status(200).json({ data: presentationGroup })
-}
 const getAllPresentaionOfOneUser = async (req, res) => {
     try {
         const userId = req.user.id
@@ -75,7 +49,12 @@ const getAllPresentaionOfOneUser = async (req, res) => {
             raw: true,
         })
 
-        return res.status(200).json({ data: presentations })
+        const distinctPresentations = presentations.filter((item, pos, self) => {
+            return self.findIndex((e) => e.id === item.id) === pos
+        })
+        console.log('🚀 ~ presentations', distinctPresentations)
+
+        return res.status(200).json({ data: distinctPresentations })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Internal Server Error' })
@@ -426,7 +405,6 @@ const getActivePresentationsOfGroup = async (req, res) => {
 }
 
 module.exports = {
-    test,
     getAllPresentaionOfOneUser,
     getAllPresentationOfGroup,
     getPresentationForHostById,

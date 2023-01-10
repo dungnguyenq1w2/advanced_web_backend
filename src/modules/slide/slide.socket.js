@@ -99,6 +99,16 @@ const control = (io, socket) => {
         }
     )
 
+    //
+    socket.on(
+        'client-send-changeSlide',
+        async (slideId, slideIndex, presentationGroupId = null) => {
+            io.of('/member')
+                .to(`slide-${slideId}-${presentationGroupId}`)
+                .emit('server-send-changeSlide', slideIndex)
+        }
+    )
+
     socket.on(
         'client-save-slide',
         async (
@@ -284,6 +294,15 @@ const controlSession = (io, socket) => {
             presentation.dataValues.slides.forEach((e) => {
                 delete slides[`${e.dataValues.id}-${presentationGroupId}`]
             })
+        }
+    )
+
+    socket.on(
+        'client-send-changeSlide',
+        async (slideId, slideIndex, presentationGroupId = null) => {
+            io.of('/member')
+                .to(`slide-${slideId}-${presentationGroupId}`)
+                .emit('server-send-changeSlide', slideIndex)
         }
     )
 }
