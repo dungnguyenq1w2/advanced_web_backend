@@ -11,12 +11,13 @@ const presentations = {}
 const control = (io, socket) => {
     socket.on(
         'client-present-presentation',
-        async (presentationId, presentationName, groupId, groupName) => {
+        async (mode, presentationId, presentationName, groupId, groupName) => {
             try {
                 const noti = {
                     content: `Presentation [${presentationName}] is presenting in group [${groupName}]`,
                     link: `/group/${groupId}`,
                     presentationId,
+                    mode,
                 }
                 io.of('/notification')
                     .to(`notification-group-${groupId}`)

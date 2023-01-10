@@ -10,6 +10,7 @@ router.get(
     authMiddleware.authenticateToken,
     presentationController.getAllPresentationOfGroup
 )
+
 router.delete(
     '/:presentationId',
     authMiddleware.authenticateToken,
@@ -43,6 +44,12 @@ router.get(
     '/group/:groupId/active',
     // authMiddleware.authenticateToken,
     presentationController.getActivePresentationsOfGroup
+)
+
+router.post(
+    '/add-to-group',
+    authMiddleware.authenticateToken,
+    presentationController.addPresentationToGroup
 )
 
 module.exports = router

@@ -373,7 +373,24 @@ const createPresentationCode = async (req, res) => {
     }
 }
 
-const addPresentationToGroup = async (req, res) => {}
+const addPresentationToGroup = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.body.presentationId)
+        const groupId = parseInt(req.body.groupId)
+
+        if (!groupId || !presentationId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation_Group.create({
+            presentation_id: presentationId,
+            group_id: groupId,
+        })
+
+        return res.status(201).json({ message: 'Successfull' })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
 
 const getActivePresentationsOfGroup = async (req, res) => {
     try {
@@ -395,8 +412,6 @@ const getActivePresentationsOfGroup = async (req, res) => {
             },
         })
 
-        console.log(presentations)
-
         return res.status(200).json({ data: presentations })
     } catch (error) {
         console.log(error)
@@ -416,4 +431,5 @@ module.exports = {
     updatePresentationName,
     createPresentationCode,
     getActivePresentationsOfGroup,
+    addPresentationToGroup,
 }
