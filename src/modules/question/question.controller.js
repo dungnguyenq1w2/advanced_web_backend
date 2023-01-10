@@ -23,7 +23,7 @@ const getAllQuestions = async (req, res) => {
     try {
         const presentationId = parseInt(req.query?.presentationId)
         const filter = req.query?.filter
-        console.log('🚀 ~ filter', filter)
+        // console.log('🚀 ~ filter', filter)
 
         const page = req.query?.page || 1
         const offset = (page - 1) * LIMIT

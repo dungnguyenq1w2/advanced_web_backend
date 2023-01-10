@@ -7,13 +7,12 @@ const Message = db.Message
 
 const getAllMessagesOfPage = async (req, res) => {
     try {
-        const { presentationId, presentationGroupId } = req.query
+        const { presentationId } = req.query
         const page = req.query?.page || 1
         const limit = 5
         const offset = (page - 1) * limit
 
-        if (!presentationId || !presentationGroupId)
-            return res.status(400).json({ message: 'Bad request' })
+        if (!presentationId) return res.status(400).json({ message: 'Bad request' })
 
         const messages = await Message.findAll({
             attributes: ['id', 'content', 'created_at', 'user_id'],

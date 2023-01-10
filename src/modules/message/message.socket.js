@@ -46,7 +46,7 @@ const control = (io, socket) => {
             if (presentation) {
                 noti = {
                     content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
-                    link: `/presentation-slide/${presentationId}`,
+                    // link: `/presentation-slide/${presentationId}`,
                 }
             }
 
@@ -123,7 +123,7 @@ const controlSession = (io, socket) => {
             if (presentation) {
                 noti = {
                     content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
-                    link: `/presentation-slide/${presentationId}`,
+                    // link: `/presentation-slide/${presentationId}`,
                 }
             }
 

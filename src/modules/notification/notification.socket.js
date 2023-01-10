@@ -55,7 +55,7 @@ const leaveNotificationRoom = (io, socket) => {
         try {
             // const room = `message-${presentationId}-${presentationGroupId}`
             // console.log('[socket]', 'leave room :', room)
-            console.log('[socket]', 'disconnect :')
+            // console.log('[socket]', 'disconnect :')
             // socket.leave(room)
             socket.disconnect()
         } catch (e) {
@@ -90,7 +90,7 @@ const leavePublicPresentationNotificationRoom = (io, socket) => {
             // console.log('[socket]', 'leave room :', room)
 
             const room = `notification-${presentationId}`
-            console.log('[socket]', 'disconnect :')
+            // console.log('[socket]', 'disconnect :')
             socket.leave(room)
             socket.disconnect()
         } catch (e) {

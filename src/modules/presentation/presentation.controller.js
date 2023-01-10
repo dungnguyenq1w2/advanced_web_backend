@@ -52,7 +52,7 @@ const getAllPresentaionOfOneUser = async (req, res) => {
         const distinctPresentations = presentations.filter((item, pos, self) => {
             return self.findIndex((e) => e.id === item.id) === pos
         })
-        console.log('🚀 ~ presentations', distinctPresentations)
+        // console.log('🚀 ~ presentations', distinctPresentations)
 
         return res.status(200).json({ data: distinctPresentations })
     } catch (error) {

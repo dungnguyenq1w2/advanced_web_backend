@@ -71,7 +71,7 @@ const control = (io, socket) => {
                     content: `${question.user.name} ${
                         question.isAnswer ? 'answer your question in' : 'post a new question to'
                     } presentation [${presentation.name}]`,
-                    link: `/presentation-slide/${presentationId}`,
+                    // link: `/presentation-slide/${presentationId}`,
                 }
             }
         }
