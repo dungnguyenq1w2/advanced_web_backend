@@ -60,9 +60,9 @@ const socketConnection = (io) => {
         presentationSocket.control(io, socket)
     })
 
-    // Presentation socket
-    io.of('/presentation').on('connection', (socket) => {
-        presentationSocket.control(io, socket)
+    // Slide socket
+    io.of('/slide').on('connection', (socket) => {
+        slideSocket.control(io, socket)
     })
 
     // Notification socket

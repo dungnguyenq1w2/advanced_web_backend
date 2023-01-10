@@ -98,6 +98,48 @@ const control = (io, socket) => {
             }
         }
     )
+
+    socket.on(
+        'client-save-slide',
+        async (
+            slideId,
+            // isPresenting,
+            // isSlideChange,
+            // isChoicesChange,
+            updateSlideData = {}
+        ) => {
+            try {
+                await Slide.update(updateSlideData, { where: { id: slideId } })
+            } catch (error) {
+                console.log('🚀 ~ error', error)
+            }
+        }
+    )
+
+    socket.on('client-save-slideChoices', async (slideChoices = []) => {
+        try {
+            for (const choice of slideChoices) {
+                if (choice?.action) {
+                    const { action, id, ...choiceData } = choice
+                    switch (choice?.action) {
+                        case 'ADD':
+                            await Choice.create(choiceData)
+                            break
+                        case 'UPDATE':
+                            await Choice.update(choiceData, { where: { id: id } })
+                            break
+                        case 'DELETE':
+                            await Choice.destroy({ where: { id: id } })
+                            break
+                        default:
+                            break
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('🚀 ~ error', error)
+        }
+    })
 }
 
 // session slide data
