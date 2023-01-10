@@ -183,6 +183,7 @@ const sendEmailResetPassword = async (req, res) => {
 const verify = async (req, res) => {
     try {
         const { email, token } = req.body
+        if (!email || !token) return res.status(400).json({ message: 'Body null' })
         await bcrypt.compare(
             email + process.env.REFRESH_TOKEN_SECRET,
             token,
@@ -240,6 +241,7 @@ const verify = async (req, res) => {
 
 const logout = async (req, res) => {
     const token = req.body
+    if(!token) return res.status(400).json({ message: 'Body null' })
 
     try {
         const { errors } = await refreshTokenBodyValidation(token)
