@@ -14,7 +14,7 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            is_edititing: {
+            is_editing: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
             },

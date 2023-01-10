@@ -95,7 +95,7 @@ const getAllPresentationOfGroup = async (req, res) => {
             include: {
                 model: Presentation,
                 as: 'presentation',
-                attributes: ['id', 'name', 'code'],
+                attributes: ['id', 'name', 'code', 'is_editing'],
             },
         })
         return res.status(200).json({ data: presentations })
@@ -409,7 +409,7 @@ const getActivePresentationsOfGroup = async (req, res) => {
             include: {
                 model: Presentation,
                 as: 'presentation',
-                attributes: ['id', 'name', 'code', 'is_presenting'],
+                attributes: ['id', 'name', 'code', 'is_presenting', 'is_editing'],
                 where: {
                     is_presenting: 1,
                 },

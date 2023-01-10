@@ -73,6 +73,36 @@ const control = (io, socket) => {
             console.log('🚀 ~ error', error)
         }
     })
+
+    socket.on('client-edit-presentation', async (presentationId) => {
+        try {
+            await Presentation.update(
+                { is_editing: 1 },
+                {
+                    where: {
+                        id: presentationId,
+                    },
+                }
+            )
+        } catch (error) {
+            console.log('🚀 ~ error', error)
+        }
+    })
+
+    socket.on('client-stopedit-presentation', async (presentationId) => {
+        try {
+            await Presentation.update(
+                { is_editing: 0 },
+                {
+                    where: {
+                        id: presentationId,
+                    },
+                }
+            )
+        } catch (error) {
+            console.log('🚀 ~ error', error)
+        }
+    })
 }
 
 module.exports = {
