@@ -392,6 +392,29 @@ const addPresentationToGroup = async (req, res) => {
     }
 }
 
+const removePresentationFromGroup = async (req, res) => {
+    try {
+        // const presentationId = parseInt(req.body.presentationId)
+        // const groupId = parseInt(req.body.groupId)
+        const presentationGroupId = parseInt(req.params?.presentationGroupId)
+
+        if (!presentationGroupId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation_Group.destroy({
+            where: {
+                // presentation_id: presentationId,
+                // group_id: groupId,
+                id: presentationGroupId,
+            },
+        })
+
+        return res.status(204)
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const getActivePresentationsOfGroup = async (req, res) => {
     try {
         const groupId = req.params.groupId
@@ -432,4 +455,5 @@ module.exports = {
     createPresentationCode,
     getActivePresentationsOfGroup,
     addPresentationToGroup,
+    removePresentationFromGroup,
 }
