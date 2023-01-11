@@ -9,7 +9,7 @@ const getAllMessagesOfPage = async (req, res) => {
     try {
         const { presentationId } = req.query
         const page = req.query?.page || 1
-        const limit = 5
+        const limit = 10
         const offset = (page - 1) * limit
 
         if (!presentationId) return res.status(400).json({ message: 'Bad request' })

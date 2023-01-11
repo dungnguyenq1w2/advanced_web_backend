@@ -59,4 +59,10 @@ router.get(
     presentationController.getActivePresentationsOfGroup
 )
 
+router.put(
+    '/set-editing-state',
+    authMiddleware.authenticateToken,
+    presentationController.setPresentationEditingState
+)
+
 module.exports = router

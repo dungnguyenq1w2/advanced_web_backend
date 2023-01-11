@@ -321,6 +321,12 @@ const deletePresentationById = async (req, res) => {
         }
 
         if (presentation) {
+            await Presentation_Group.destroy({
+                where: {
+                    presentation_id: presentationId,
+                },
+            })
+
             await Presentation.destroy({
                 where: {
                     id: presentation.id,
@@ -373,6 +379,31 @@ const createPresentationCode = async (req, res) => {
     }
 }
 
+const setPresentationEditingState = async (req, res) => {
+    try {
+        const presentationId = req.body.presentationId
+        const isEditing = req.body.isEditing
+
+        if (!presentationId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation.update(
+            {
+                is_editing: isEditing,
+            },
+            {
+                where: {
+                    id: presentationId,
+                },
+            }
+        )
+
+        return res.status(200).json({ message: 'Set successfully' })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const addPresentationToGroup = async (req, res) => {
     try {
         const presentationId = parseInt(req.body.presentationId)
@@ -408,7 +439,8 @@ const removePresentationFromGroup = async (req, res) => {
             },
         })
 
-        return res.status(204)
+        // return res.status(204)
+        return res.status(200).json({ message: 'sccccc' })
     } catch (error) {
         console.log('🚀 ~ error', error)
         return res.status(500).json({ message: 'Internal Server Error' })
@@ -456,4 +488,5 @@ module.exports = {
     getActivePresentationsOfGroup,
     addPresentationToGroup,
     removePresentationFromGroup,
+    setPresentationEditingState,
 }

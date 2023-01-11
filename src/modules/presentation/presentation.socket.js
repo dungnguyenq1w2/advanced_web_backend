@@ -23,6 +23,18 @@ const control = (io, socket) => {
                     .to(`notification-group-${groupId}`)
                     .emit('server-present-presentation-noti', noti)
 
+                const presentingPresentation = await Presentation_Group.findOne({
+                    where: {
+                        is_presenting: true,
+                    },
+                })
+
+                if (presentingPresentation) {
+                    io.of('/presentation').emit(
+                        'server-forceStop-presentation',
+                        presentingPresentation.id
+                    )
+                }
                 await Presentation_Group.update(
                     { is_presenting: 1 },
                     {
@@ -45,6 +57,7 @@ const control = (io, socket) => {
                 for (const user_id of users) {
                     await Notification.create({ ...noti, user_id: user_id })
                 }
+
                 //#endregion
             } catch (error) {
                 console.log('🚀 ~ error', error)
