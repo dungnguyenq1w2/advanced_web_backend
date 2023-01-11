@@ -45,6 +45,7 @@ const control = (io, socket) => {
             const presentation = await Presentation.findByPk(presentationId)
             if (presentation) {
                 noti = {
+                    user_id: message.user.id,
                     content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
                     // link: `/presentation-slide/${presentationId}`,
                 }
@@ -122,6 +123,7 @@ const controlSession = (io, socket) => {
             const presentation = await Presentation.findByPk(presentationId)
             if (presentation) {
                 noti = {
+                    user_id: message.user.id,
                     content: `${message.user.name} send a new message to presentation [${presentation.name}]`,
                     // link: `/presentation-slide/${presentationId}`,
                 }
