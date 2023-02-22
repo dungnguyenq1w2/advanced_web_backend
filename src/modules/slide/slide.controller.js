@@ -33,7 +33,25 @@ const getFirstSlide = async (req, res) => {
             where: {
                 presentation_id: presentationId,
             },
-            // order: [['id', 'ASC']],
+            order: [['id', 'ASC']],
+        })
+
+        return res.status(200).json({ data: { id: slide.id } })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const getLastSlide = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.body.presentationId)
+
+        const slide = await Slide.findOne({
+            where: {
+                presentation_id: presentationId,
+            },
+            order: [['id', 'DESC']],
         })
 
         return res.status(200).json({ data: { id: slide.id } })
@@ -179,6 +197,7 @@ const getSlideResultForGuest = async (req, res) => {
 module.exports = {
     getAllSlides,
     getFirstSlide,
+    getLastSlide,
     getSlideById,
     addSlide,
     updateSlide,

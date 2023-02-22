@@ -8,6 +8,8 @@ router.post('/', authMiddleware.authenticateToken, slideController.getAllSlides)
 
 router.post('/first-slide', authMiddleware.authenticateToken, slideController.getFirstSlide)
 
+router.post('/last-slide', authMiddleware.authenticateToken, slideController.getLastSlide)
+
 router.get('/:slideId', authMiddleware.authenticateToken, slideController.getSlideById)
 
 router.post('/add', authMiddleware.authenticateToken, slideController.addSlide)
