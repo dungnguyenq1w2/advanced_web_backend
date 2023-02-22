@@ -21,6 +21,11 @@ router.get(
     authMiddleware.authenticateToken,
     slideController.getSlideResultForHost
 )
+router.get(
+    '/:slideId/host1',
+    authMiddleware.authenticateToken,
+    slideController.getSlideResultForHost
+)
 
 router.get('/:slideId/guest', slideController.getSlideResultForGuest)
 
