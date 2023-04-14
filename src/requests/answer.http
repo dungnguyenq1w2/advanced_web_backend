@@ -2,18 +2,12 @@
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
 
 ###
-# @name getUser
-GET {{baseUrl}}/users/1
-
-###
-# @name update
-PUT {{baseUrl}}/users/2
+# @name addAnswer
+POST {{baseUrl}}/answers
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "name": "Nguyễn Tấn Dũng",
-    "email": "dung",
-    "password": "123456" ,
-    "confirmPassword": "123456" 
+    "content":"answer test",
+    "question_id": 25
 }

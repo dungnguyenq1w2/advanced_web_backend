@@ -29,6 +29,6 @@ router.get(
     slideController.getSlideResultForHost
 )
 
-router.get('/:slideId/guest', slideController.getSlideResultForGuest)
+router.get('/:slideId/member', slideController.getSlideResultForMember)
 
 module.exports = router

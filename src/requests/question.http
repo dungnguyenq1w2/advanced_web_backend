@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:5000/api
+
+###
+# @name getAllQuestions
+GET {{baseUrl}}/questions?presentationId=5&page=1&filter=a
+
+###
+# @name addQuestion
+POST {{baseUrl}}/questions
+Content-Type: application/json
+
+{
+    "content":"test test",
+    "presentation_id": 5,
+    "presentation_group_id": 4
+}
+
+###
+# @name addVote
+POST {{baseUrl}}/questions/1/vote

@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzIwNDUxNTgsImV4cCI6MTY3MjY0OTk1OH0.AurgbR4agLvq4Qnz2RKNJGFZgPT6TaVty_URmTvD9t4
+
+###
+# @name getAllMessages
+GET {{baseUrl}}/messages?presentationId=3&presentationGroupId=1&page=1
+
+###
+# @name getToltalMessage
+GET {{baseUrl}}/messages/totalMessage?presentationId=3&presentationGroupId=1
+
+###
+# @name addMessage
+POST {{baseUrl}}/messages
+#Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "content":"test test 9",
+    "presentation_id": 3,
+    "presentation_group_id": 1
+}

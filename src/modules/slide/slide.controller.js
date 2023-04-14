@@ -1,10 +1,14 @@
 const db = require('#common/database/index.js')
 const sequelize = require('sequelize')
+const { QueryTypes } = require('sequelize')
 
 // Create main Model
+const User = db.User
 const Slide = db.Slide
 const Choice = db.Choice
 const User_Choice = db.User_Choice
+const Presentation = db.Presentation
+const Presentation_Group = db.Presentation_Group
 
 // Main work
 
@@ -116,30 +120,30 @@ const deleteSlide = async (req, res) => {
 
 const getSlideResultForHost = async (req, res) => {
     try {
-        const slideId = req.params.slideId
+        const slideId = parseInt(req.params.slideId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+
+        if (!slideId) return res.status(400).json({ message: 'Invalid slide id' })
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
                 model: Choice,
                 as: 'choices',
-                // attributes: [[sequelize.fn('COUNT', sequelize.col('choice_id')), 'n_choices']],
-                attributes: {
-                    include: [
-                        [
-                            sequelize.literal(`(
-                                SELECT COUNT(*)
-                                FROM user_choice
-                                WHERE
-                                    user_choice.choice_id = choices.id
-                            )`),
-                            'n_choices',
-                        ],
-                    ],
+                include: {
+                    model: User_Choice,
+                    as: 'user_choices',
+                    attributes: ['id', 'choice_id', 'created_at'],
+                    where: {
+                        presentation_group_id: presentationGroupId ? presentationGroupId : null,
+                    },
+                    required: false,
+                    include: {
+                        model: User,
+                        as: 'member',
+                        attributes: ['id', 'name', 'image'],
+                        required: false,
+                    },
                 },
-                // include: {
-                //     model: User_Choice.count(),
-                //     as: 'user_choices',
-                // },
             },
         })
         return res.status(200).json({ data: slideResult })
@@ -149,12 +153,14 @@ const getSlideResultForHost = async (req, res) => {
     }
 }
 
-const getSlideResultForGuest = async (req, res) => {
+const getSlideResultForMember = async (req, res) => {
     try {
         const slideId = parseInt(req.params.slideId)
-        const guestId = req.query.guestId
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        const memberId = req.query.memberId
 
-        if (!(slideId && guestId)) return res.status(400)
+        if (!(slideId && memberId))
+            return res.status(400).json({ message: 'Invalid slide id or member id' })
 
         const slideResult = await Slide.findByPk(slideId, {
             include: {
@@ -167,7 +173,9 @@ const getSlideResultForGuest = async (req, res) => {
                                 SELECT COUNT(*)
                                 FROM user_choice
                                 WHERE
-                                    user_choice.choice_id = choices.id
+                                    user_choice.choice_id = choices.id and presentation_group_id ${
+                                        presentationGroupId ? `= ${presentationGroupId}` : 'is null'
+                                    } 
                             )`),
                             'n_choices',
                         ],
@@ -176,10 +184,12 @@ const getSlideResultForGuest = async (req, res) => {
                 include: {
                     model: User_Choice,
                     as: 'user_choices',
-                    required: false,
+                    attributes: ['id', 'choice_id'],
                     where: {
-                        guest_id: guestId,
+                        presentation_group_id: presentationGroupId ? presentationGroupId : null,
+                        member_id: memberId,
                     },
+                    required: false,
                 },
             },
         })
@@ -194,6 +204,7 @@ const getSlideResultForGuest = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
+
 module.exports = {
     getAllSlides,
     getFirstSlide,
@@ -203,5 +214,5 @@ module.exports = {
     updateSlide,
     deleteSlide,
     getSlideResultForHost,
-    getSlideResultForGuest,
+    getSlideResultForMember,
 }

@@ -1,10 +1,16 @@
 const bcrypt = require('bcrypt')
+const saltRound = parseInt(process.env.SALT)
 
 const db = require('#common/database/index.js')
 const mailer = require('#root/utils/mailer.js')
-const { htmlContent } = require('#common/config/mail.config.js')
+const { htmlContentVerifyUser, htmlContentResetPassword } = require('#common/config/mail.config.js')
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('#common/config/googleOAuth2.config.js')
-const { generateAccessToken, generateTokens, verifyRefreshToken } = require('#root/utils/token.js')
+const {
+    generateAccessToken,
+    generateTokens,
+    verifyRefreshToken,
+    generateResetPasswordToken,
+} = require('#root/utils/token.js')
 const {
     loginBodyValidation,
     refreshTokenBodyValidation,
@@ -17,10 +23,11 @@ const googleClient = new OAuth2Client({
     clientId: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
 })
+const blacklistTokenController = require('../blacklist_token/blacklist_token.controller')
 
 // create main Model
 const User = db.User
-
+const Blacklist_Token = db.Blacklist_Token
 // main work
 
 const register = async (req, res) => {
@@ -31,16 +38,15 @@ const register = async (req, res) => {
         if (errors) return res.status(400).json({ message: errors[0] })
 
         const user = await User.findOne({ where: { email: userRegister.email } })
-        if (user) return res.status(409).json({ message: 'Tài khoản đã tồn tại' })
+        if (user) return res.status(409).json({ message: 'User has existed' })
 
-        const salt = await bcrypt.genSalt(Number(process.env.SALT))
-        const hashPassword = await bcrypt.hash(userRegister.password, salt)
+        const hashPassword = await bcrypt.hash(userRegister.password, saltRound)
 
         const addUser = await User.create({ ...userRegister, password: hashPassword })
         if (addUser) {
             const resultUser = { id: addUser.id, name: addUser.name, email: addUser.email }
             await bcrypt
-                .hash(addUser.email + process.env.REFRESH_TOKEN_SECRET, parseInt(process.env.SALT))
+                .hash(addUser.email + process.env.REFRESH_TOKEN_SECRET, saltRound)
                 .then(async (hashedEmail, error) => {
                     if (error) {
                         console.log(error)
@@ -49,7 +55,7 @@ const register = async (req, res) => {
                     await mailer.sendMail(
                         addUser.email,
                         'Verify Email',
-                        htmlContent(addUser.email, hashedEmail)
+                        htmlContentVerifyUser(addUser.email, hashedEmail)
                     )
                 })
             return res.status(201).json({
@@ -58,6 +64,39 @@ const register = async (req, res) => {
             })
         } else return res.status(500).json({ message: 'Internal Server Error' })
     } catch (err) {
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const { newPassword, confirmPassword, token } = req.body
+    try {
+        if (newPassword != confirmPassword)
+            return res.status(400).json({ message: 'Password and confirm password not match' })
+
+        const user = await User.findOne({
+            where: { email: req.user.email },
+            attributes: ['id'],
+            raw: true,
+        })
+
+        if (!user) return res.status(400).json({ message: 'Account does not exist' })
+        const hashPassword = await bcrypt.hash(newPassword, saltRound)
+
+        const [row] = await User.update(
+            { password: hashPassword, refresh_token: '' },
+            { where: { id: user.id } }
+        )
+
+        if (row > 0) {
+            const isCreatedToken = await blacklistTokenController.addToken(token)
+            if (isCreatedToken) 
+                return res.status(200).json({status: true})
+        }
+
+        return res.status(500).json({ message: 'Internal Server Error' })
+    } catch (err) {
+        console.log(err)
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
@@ -106,7 +145,6 @@ const getNewToken = async (req, res) => {
 
     verifyRefreshToken(token.refreshToken)
         .then(async ({ tokenDetails }) => {
-            // const user = { id: tokenDetails.id, name: tokenDetails.name }
             const accessToken = await generateAccessToken(tokenDetails)
 
             return res.status(200).json({
@@ -117,9 +155,35 @@ const getNewToken = async (req, res) => {
         .catch((err) => res.status(400).json(err)) // Refresh token was expired
 }
 
+const sendEmailResetPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) return res.status(400).json({ message: 'Body null' })
+
+        const user = await User.findOne({
+            where: { email: email },
+            attributes: ['id', 'email'],
+            raw: true,
+        })
+
+        if (!user) return res.status(400).json({ message: 'Account does not exist' })
+        const token = await generateResetPasswordToken(user)
+        //console.log(token)
+        await mailer.sendMail(user.email, 'Reset Password', htmlContentResetPassword(token))
+
+        return res.status(200).json({
+            message: 'The token is only valid for 15 minutes. So, please check your email now!',
+        })
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const verify = async (req, res) => {
     try {
         const { email, token } = req.body
+        if (!email || !token) return res.status(400).json({ message: 'Body null' })
         await bcrypt.compare(
             email + process.env.REFRESH_TOKEN_SECRET,
             token,
@@ -177,6 +241,7 @@ const verify = async (req, res) => {
 
 const logout = async (req, res) => {
     const token = req.body
+    if(!token) return res.status(400).json({ message: 'Body null' })
 
     try {
         const { errors } = await refreshTokenBodyValidation(token)
@@ -244,4 +309,13 @@ const googleLogin = async (req, res) => {
     }
 }
 
-module.exports = { register, login, getNewToken, verify, logout, googleLogin }
+module.exports = {
+    register,
+    login,
+    getNewToken,
+    verify,
+    logout,
+    googleLogin,
+    resetPassword,
+    sendEmailResetPassword,
+}

@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjcsIm5hbWUiOiJOZ3V54buFbiBU4bqlbiBExaluZyIsImltYWdlIjoiIiwiZW1haWwiOiJkdW5nbmd1eWVucTF3MkBnbWFpbC5jb20iLCJpc19hdXRoIjoxLCJpYXQiOjE2NzI3NDEwNTQsImV4cCI6MTY3Mjc0NzA1NH0.kuYde8GPt2zXxEPUrdBz3R9n-e4i23FfA3m-4SskIA0
+
+###
+# @name getAllNotifications
+GET {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
+
+###
+# @name addPresentation
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "user_id": "27",
+    "content": "content test 2",
+    "link": "link test 2"
+}
+
+###
+# @name readNotifications
+PUT {{baseUrl}}/notifications
+Authorization: Bearer {{token}}

@@ -18,9 +18,14 @@ const groupApi = require('#modules/group/group.api.js')
 const presentationApi = require('#modules/presentation/presentation.api.js')
 const slideApi = require('#modules/slide/slide.api.js')
 const choiceApi = require('#modules/choice/choice.api.js')
+const notificationApi = require('#modules/notification/notification.api.js')
+const messageApi = require('#modules/message/message.api.js')
+const questionApi = require('#modules/question/question.api.js')
+const answerApi = require('#modules/answer/answer.api.js')
 
-const { hostSocket, guestSocket } = require('./src/common/socket')
+const { hostSocket, memberSocket } = require('./src/common/socket')
 const slideSocket = require('#modules/slide/slide.socket.js')
+const socketConnection = require('./src/common/socket')
 
 const app = express()
 
@@ -65,6 +70,10 @@ app.use('/api/groups', groupApi)
 app.use('/api/presentations', presentationApi)
 app.use('/api/slides', slideApi)
 app.use('/api/choices', choiceApi)
+app.use('/api/notifications', notificationApi)
+app.use('/api/messages', messageApi)
+app.use('/api/questions', questionApi)
+app.use('/api/answers', answerApi)
 
 app.get('/', (req, res) => {
     res.send('Advanced Web')
@@ -72,29 +81,7 @@ app.get('/', (req, res) => {
 //#endregion
 
 //#region Socket
-// Host socket
-io.of('/host').on('connection', (socket) => {
-    // console.log('Host connected')
-    // Subscribe Slide room
-    hostSocket.hostJoinSlideRoom(socket)
-
-    // Unsubscribe Slide room
-    hostSocket.hostLeaveSlideRoom(socket)
-
-    slideSocket(io, socket)
-})
-
-// Member socket
-io.of('/guest').on('connection', (socket) => {
-    // console.log('Guest connected')
-    // Subscribe Slide room
-    guestSocket.guestJoinSlideRoom(socket)
-
-    // Unsubscribe Slide room
-    guestSocket.guestLeaveSlideRoom(socket)
-
-    slideSocket(io, socket)
-})
+socketConnection(io)
 //#endregion
 
 httpsServer.listen(process.env.PORT || 5000, function () {

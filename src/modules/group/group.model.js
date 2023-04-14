@@ -10,6 +10,11 @@ module.exports = (Sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            created_at: {
+                type: 'TIMESTAMP',
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+                allowNull: false,
+            },
         },
         {
             timestamps: false,
@@ -22,11 +27,10 @@ module.exports = (Sequelize, DataTypes) => {
             foreignKey: 'group_id',
             as: 'participants',
         })
-
-        // Associate Group(1) - Presentation(*)
-        Group.hasMany(models.Presentation, {
+        // Associate Group(1) - Presentation_Group(*)
+        Group.hasMany(models.Presentation_Group, {
             foreignKey: 'group_id',
-            as: 'presentations',
+            as: 'presentation_groups',
         })
     }
     return Group

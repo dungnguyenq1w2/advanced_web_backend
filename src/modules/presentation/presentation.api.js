@@ -4,11 +4,13 @@ const authMiddleware = require('#common/middlewares/auth.middleware.js')
 
 const router = Router()
 
+router.get('/', authMiddleware.authenticateToken, presentationController.getAllPresentaionOfOneUser)
 router.get(
-    '/',
+    '/group/:groupId',
     authMiddleware.authenticateToken,
-    presentationController.getAllPresentaionOfOneUser
+    presentationController.getAllPresentationOfGroup
 )
+
 router.delete(
     '/:presentationId',
     authMiddleware.authenticateToken,
@@ -20,7 +22,12 @@ router.get(
     presentationController.getPresentationById
 )
 router.post('/checkCode', presentationController.checkCode)
-router.get('/:presentationId/slides', presentationController.getAllSlides)
+router.get(
+    '/:presentationId/host',
+    authMiddleware.authenticateToken,
+    presentationController.getPresentationForHostById
+)
+router.get('/:presentationId/member', presentationController.getPresentationForMemberById)
 router.post('/add', authMiddleware.authenticateToken, presentationController.addPresentation)
 router.put(
     '/updateName',
@@ -31,6 +38,31 @@ router.post(
     '/createCode/:presentationId',
     authMiddleware.authenticateToken,
     presentationController.createPresentationCode
+)
+
+router.post(
+    '/add-to-group',
+    authMiddleware.authenticateToken,
+    presentationController.addPresentationToGroup
+)
+
+// router.post(
+router.delete(
+    '/:presentationGroupId/remove-from-group',
+    authMiddleware.authenticateToken,
+    presentationController.removePresentationFromGroup
+)
+
+router.get(
+    '/group/:groupId/active',
+    // authMiddleware.authenticateToken,
+    presentationController.getActivePresentationsOfGroup
+)
+
+router.put(
+    '/set-editing-state',
+    authMiddleware.authenticateToken,
+    presentationController.setPresentationEditingState
 )
 
 module.exports = router

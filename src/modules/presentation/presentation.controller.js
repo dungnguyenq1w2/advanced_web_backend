@@ -1,19 +1,80 @@
 const db = require('#common/database/index.js')
+const { Op, where } = require('sequelize')
 // Create main Model
 const Presentation = db.Presentation
+const Presentation_Group = db.Presentation_Group
 const Slide = db.Slide
-const User = db.User
+const Group = db.Group
 const Choice = db.Choice
 const User_Choice = db.User_Choice
+const User_Group = db.User_Group
 
 // Main work
-
 const getAllPresentaionOfOneUser = async (req, res) => {
     try {
         const userId = req.user.id
+        if (!userId) return res.status(400).json({ message: 'Invalid user id' })
+
+        //id: { [Op.col]: 'Presentation_Group.id' },
         const presentations = await Presentation.findAll({
+            include: {
+                model: Presentation_Group,
+                as: 'presentation_groups',
+                required: false,
+                attributes: [],
+                // raw: true,
+                include: {
+                    model: Group,
+                    as: 'group',
+                    attributes: [],
+                    include: {
+                        model: User_Group,
+                        as: 'participants',
+                        attributes: [],
+                        // raw: true,
+                    },
+                },
+            },
             where: {
-                host_id: userId,
+                [Op.or]: [
+                    { owner_id: userId },
+                    {
+                        [Op.and]: [
+                            { '$presentation_groups.group.participants.user_id$': userId },
+                            { '$presentation_groups.group.participants.role_id$': 2 },
+                        ],
+                    },
+                ],
+            },
+            raw: true,
+        })
+
+        const distinctPresentations = presentations.filter((item, pos, self) => {
+            return self.findIndex((e) => e.id === item.id) === pos
+        })
+        // console.log('🚀 ~ presentations', distinctPresentations)
+
+        return res.status(200).json({ data: distinctPresentations })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const getAllPresentationOfGroup = async (req, res) => {
+    try {
+        const groupId = req.params.groupId
+
+        if (!groupId) return res.status(400).json({ message: 'Invalid group id' })
+
+        const presentations = await Presentation_Group.findAll({
+            where: {
+                group_id: groupId,
+            },
+            include: {
+                model: Presentation,
+                as: 'presentation',
+                attributes: ['id', 'name', 'code', 'is_editing'],
             },
         })
         return res.status(200).json({ data: presentations })
@@ -23,10 +84,163 @@ const getAllPresentaionOfOneUser = async (req, res) => {
     }
 }
 
+const getPresentationById = async (req, res) => {
+    try {
+        const { presentationId } = req.params
+        if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
+
+        const presentation = await Presentation.findOne({
+            where: { id: presentationId },
+            raw: true,
+        })
+
+        if (presentation) return res.status(200).json({ data: presentation })
+        return res.status(400).json({ data: { status: false } })
+    } catch (error) {
+        console.log('Error getPresentationById: ', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const getPresentationForHostById = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.params?.presentationId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        const userId = parseInt(req?.user?.id)
+
+        if (!(presentationId && userId)) return res.status(400).json({ message: 'Invalid params' })
+
+        const presentation = await Presentation.findByPk(presentationId, {
+            attributes: ['id', 'owner_id', 'code'],
+            include: {
+                model: Slide,
+                as: 'slides',
+                attributes: ['id', 'type'],
+            },
+        })
+
+        //#region Check permission
+        presentation.dataValues.permission = {
+            isAllowed: false,
+        }
+        if (userId === parseInt(presentation.dataValues.owner_id)) {
+            presentation.dataValues.permission.isAllowed = true
+        } else {
+            // Check permission for presenting in group
+            if (presentationGroupId) {
+                const group = await Group.findAll({
+                    where: {
+                        '$presentation_groups.id$': presentationGroupId,
+                    },
+                    include: [
+                        {
+                            model: Presentation_Group,
+                            as: 'presentation_groups',
+                            required: true,
+                        },
+                    ],
+                })
+                const co_owners = await User_Group.findAll({
+                    where: {
+                        group_id: group[0].dataValues.id,
+                        role_id: 2,
+                    },
+                    attributes: ['id', 'user_id'],
+                })
+                if (co_owners.find((co_owner) => co_owner.user_id === userId)) {
+                    presentation.dataValues.permission.isAllowed = true
+                } else {
+                    // presenting in public
+                    presentation.dataValues.permission.message =
+                        'You are not co-owner of this presentation in group'
+                }
+            } else {
+                // presenting in public
+                presentation.dataValues.permission.message = 'You are not host of this presentation'
+            }
+        }
+        //#endregion
+
+        return res.status(200).json({ data: presentation })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const getPresentationForMemberById = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.params?.presentationId)
+        const presentationGroupId = parseInt(req.query?.presentationGroupId)
+        const userId = parseInt(req.query?.userId)
+
+        if (!presentationId) return res.status(400).json({ message: 'Invalid presentation id' })
+
+        //#region Check permission
+        const permission = {
+            isAllowed: false,
+        }
+        // Check permission for presenting in group
+        if (presentationGroupId) {
+            if (!userId) {
+                permission.message = 'You must be a member in group to access this presentation'
+            } else {
+                // Phải dùng findAll khi tìm kiếm quan hệ
+                const group = await Group.findAll({
+                    where: {
+                        '$presentation_groups.id$': presentationGroupId,
+                    },
+                    include: [
+                        {
+                            model: Presentation_Group,
+                            as: 'presentation_groups',
+                            required: true,
+                        },
+                    ],
+                })
+                const user = await User_Group.findOne({
+                    where: {
+                        group_id: group[0].dataValues.id,
+                        user_id: userId,
+                    },
+                    attributes: ['id', 'user_id'],
+                })
+                if (user?.dataValues?.id) {
+                    permission.isAllowed = true
+                } else {
+                    permission.message = 'You are not a member of this presentation'
+                }
+            }
+        } else {
+            permission.isAllowed = true
+        }
+        //#endregion
+
+        if (permission.isAllowed === false) {
+            return res.status(200).json({ data: { permission } })
+        } else {
+            const presentation = await Presentation.findByPk(presentationId, {
+                attributes: ['id', 'owner_id', 'code'],
+                include: {
+                    model: Slide,
+                    as: 'slides',
+                    attributes: ['id', 'type'],
+                },
+            })
+            presentation.dataValues.permission = permission
+
+            return res.status(200).json({ data: presentation })
+        }
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 const checkCode = async (req, res) => {
     try {
         const { code } = req.body
-        if (!code) return res.status(400)
+        if (!code) return res.status(400).json({ data: { status: false } })
 
         const presentation = await Presentation.findOne({ where: { code: code }, raw: true })
         if (presentation) return res.status(200).json({ data: presentation })
@@ -40,7 +254,7 @@ const checkCode = async (req, res) => {
 const addPresentation = async (req, res) => {
     try {
         const { hostId, name } = req.body
-        if (!hostId || !name) return res.status(400)
+        if (!hostId || !name) return res.status(400).json()
 
         const codes = await Presentation.findAll({
             attributes: ['code'],
@@ -52,7 +266,7 @@ const addPresentation = async (req, res) => {
             while (code.length < 8) code = '0' + code
         } while (codes.includes(code))
 
-        const presentation = await Presentation.create({ host_id: hostId, code: code, name: name })
+        const presentation = await Presentation.create({ owner_id: hostId, code: code, name: name })
 
         return res.status(200).json({ data: presentation })
     } catch (error) {
@@ -64,7 +278,7 @@ const addPresentation = async (req, res) => {
 const deletePresentationById = async (req, res) => {
     try {
         const presentationId = parseInt(req.params.presentationId)
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json()
 
         const presentation = await Presentation.findByPk(presentationId, {
             attributes: ['id'],
@@ -107,6 +321,12 @@ const deletePresentationById = async (req, res) => {
         }
 
         if (presentation) {
+            await Presentation_Group.destroy({
+                where: {
+                    presentation_id: presentationId,
+                },
+            })
+
             await Presentation.destroy({
                 where: {
                     id: presentation.id,
@@ -120,53 +340,13 @@ const deletePresentationById = async (req, res) => {
     }
 }
 
-const getAllSlides = async (req, res) => {
-    try {
-        const presentationId = parseInt(req.params.presentationId)
-        if (!presentationId) return res.status(400)
-
-        const slides = await Presentation.findByPk(presentationId, {
-            attributes: ['id', 'host_id', 'code'],
-            include: {
-                model: Slide,
-                as: 'slides',
-                attributes: ['id'],
-            },
-        })
-
-        return res.status(200).json({ data: slides })
-    } catch (error) {
-        console.log('🚀 ~ error', error)
-        return res.status(500).json({ message: 'Internal Server Error' })
-    }
-}
-
-const getPresentationById = async (req, res) => {
-    try {
-        const { presentationId } = req.params
-        if (!presentationId) return res.status(400)
-
-        const presentation = await Presentation.findOne({
-            where: { id: presentationId },
-            raw: true,
-        })
-
-        if (presentation) return res.status(200).json({ data: presentation })
-        return res.status(400).json({ data: { status: false } })
-    } catch (error) {
-        console.log('Error getPresentationById: ', error)
-        return res.status(500).json({ message: 'Internal Server Error' })
-    }
-}
-
 const updatePresentationName = async (req, res) => {
     try {
         const { presentationId, name } = req.body
-        if (!presentationId || !name) return res.status(400)
+        if (!presentationId || !name) return res.status(400).json()
 
         const [row] = await Presentation.update({ name: name }, { where: { id: presentationId } })
-        if (row > 0) 
-            return res.status(200).json({ data: name })
+        if (row > 0) return res.status(200).json({ data: name })
         return res.status(400).json()
     } catch (error) {
         console.log('Error updatePresentationName: ', error)
@@ -177,7 +357,7 @@ const updatePresentationName = async (req, res) => {
 const createPresentationCode = async (req, res) => {
     try {
         const presentationId = parseInt(req.params.presentationId)
-        if (!presentationId) return res.status(400)
+        if (!presentationId) return res.status(400).json()
 
         const codes = await Presentation.findAll({
             attributes: ['code'],
@@ -189,23 +369,124 @@ const createPresentationCode = async (req, res) => {
             while (code.length < 8) code = '0' + code
         } while (codes.includes(code))
 
-       const [row] = await Presentation.update({ code: code }, { where: { id: presentationId } })
+        const [row] = await Presentation.update({ code: code }, { where: { id: presentationId } })
 
-       if (row > 0) return res.status(200).json({ data: code })
-       return res.status(400)
+        if (row > 0) return res.status(200).json({ data: code })
+        return res.status(400).json()
     } catch (error) {
         console.log('Error createPresentationCode: ', error)
         return res.status(500).json({ message: 'Internal Server Error' })
     }
 }
 
+const setPresentationEditingState = async (req, res) => {
+    try {
+        const presentationId = req.body.presentationId
+        const isEditing = req.body.isEditing
+
+        if (!presentationId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation.update(
+            {
+                is_editing: isEditing,
+            },
+            {
+                where: {
+                    id: presentationId,
+                },
+            }
+        )
+
+        return res.status(200).json({ message: 'Set successfully' })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const addPresentationToGroup = async (req, res) => {
+    try {
+        const presentationId = parseInt(req.body.presentationId)
+        const groupId = parseInt(req.body.groupId)
+
+        if (!groupId || !presentationId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation_Group.create({
+            presentation_id: presentationId,
+            group_id: groupId,
+        })
+
+        return res.status(201).json({ message: 'Successfull' })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const removePresentationFromGroup = async (req, res) => {
+    try {
+        // const presentationId = parseInt(req.body.presentationId)
+        // const groupId = parseInt(req.body.groupId)
+        const presentationGroupId = parseInt(req.params?.presentationGroupId)
+
+        if (!presentationGroupId) return res.status(400).json({ message: 'Invalid' })
+
+        await Presentation_Group.destroy({
+            where: {
+                // presentation_id: presentationId,
+                // group_id: groupId,
+                id: presentationGroupId,
+            },
+        })
+
+        // return res.status(204)
+        return res.status(200).json({ message: 'sccccc' })
+    } catch (error) {
+        console.log('🚀 ~ error', error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
+const getActivePresentationsOfGroup = async (req, res) => {
+    try {
+        const groupId = req.params.groupId
+
+        if (!groupId) return res.status(400).json({ message: 'Invalid group id' })
+
+        const presentations = await Presentation_Group.findAll({
+            where: {
+                group_id: groupId,
+            },
+            include: {
+                model: Presentation,
+                as: 'presentation',
+                attributes: ['id', 'name', 'code', 'is_presenting', 'is_editing'],
+                where: {
+                    is_presenting: 1,
+                },
+            },
+        })
+
+        return res.status(200).json({ data: presentations })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getAllPresentaionOfOneUser,
-    getAllSlides,
+    getAllPresentationOfGroup,
+    getPresentationForHostById,
+    getPresentationForMemberById,
     deletePresentationById,
     checkCode,
     addPresentation,
     getPresentationById,
     updatePresentationName,
     createPresentationCode,
+    getActivePresentationsOfGroup,
+    addPresentationToGroup,
+    removePresentationFromGroup,
+    setPresentationEditingState,
 }
